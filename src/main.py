@@ -13,7 +13,7 @@ def main():
     contract_number, location, doc_date, work_list = get_user_input()
 
     # Генерация документа
-    work_list = ["Пример работы 1", "Пример работы 2"]  # Замените на фактический список работ
+    work_list = work_list  # Замените на фактический список работ
     generate_docx(customer, work_list, payment_term, completion, contract_number, location, doc_date)
     print(f"Документ сохранен в папке docs_out под именем doc_{contract_number}.docx")
 

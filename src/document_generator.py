@@ -118,12 +118,12 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     cell1 = table.cell(0, 0)
     cell1.text = 'Исполнитель_________(К.А. Панченко)'
     cell1.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-    cell1.paragraphs[0].runs[0].font.size = Pt(10)
+    cell1.paragraphs[0].runs[0].font.size = Pt(9)
 
     cell2 = table.cell(0, 1)
     cell2.text = f'Заказчик___________({customer[2]})'
     cell2.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-    cell2.paragraphs[0].runs[0].font.size = Pt(10)
+    cell2.paragraphs[0].runs[0].font.size = Pt(9)
 
     p = doc.add_paragraph()
     p = doc.add_paragraph()
@@ -187,12 +187,12 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     cell1 = table.cell(0, 0)
     cell1.text = 'Исполнитель_________(К.А. Панченко)'
     cell1.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-    cell1.paragraphs[0].runs[0].font.size = Pt(10)
+    cell1.paragraphs[0].runs[0].font.size = Pt(9)
 
     cell2 = table.cell(0, 1)
     cell2.text = f'Заказчик___________({customer[2]})'
     cell2.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-    cell2.paragraphs[0].runs[0].font.size = Pt(10)
+    cell2.paragraphs[0].runs[0].font.size = Pt(9)
 
     # Create output directory if it does not exist
     os.makedirs('docs_out', exist_ok=True)
