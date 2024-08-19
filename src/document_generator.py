@@ -4,7 +4,8 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from num2words import num2words
 import os
 
-def generate_docx(customer, work_list, payment_term, completion, contract_number, location, doc_date):
+def generate_docx(customer, work_list, payment_term, completion, contract_number, location,
+                  doc_date, total_cost):
     doc = Document()
 
     # Apply styles and margins
@@ -50,12 +51,20 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     doc.add_paragraph(f'2. Место проведения работ: {location}.', style='Normal')
 
     # Section 3
-    sum_in_words = num2words(payment_term[1], lang='ru', to='currency')
+    rubles, kopecks = divmod(total_cost, 1)
+    rubles = int(rubles)
+    kopecks = round(kopecks * 100)  # Округление до целых копеек
+    sum_in_words = num2words(rubles, lang='ru', to='cardinal')
+
+
     doc.add_paragraph(
-        f'3. Стоимость работ, согласно Приложению 1 к настоящему договору, составляет {payment_term[1]} '
-        f'({sum_in_words}). Без НДС.',
+        f'3. Стоимость работ, согласно Приложению 1 к настоящему договору, составляет {total_cost:.2f} '
+        f'({sum_in_words.capitalize()} белорусских рублей 00 коп.). Без НДС.',
         style='Normal'
     )
+
+
+
 
     # Section 4
     days_in_words = num2words(30, lang='ru', to='cardinal')  # Пример для 30 дней
@@ -178,7 +187,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
 
     # Total sum
     sum_total = total_sum
-    doc.add_paragraph(f'Итого стоимость работ: {sum_total} ({num2words(sum_total, lang="ru", to="currency")}). Без НДС.', style='Normal')
+    doc.add_paragraph(f'Итого стоимость работ: {sum_total:.2f} ({num2words(sum_total, lang="ru", to="currency")}). Без НДС.', style='Normal')
 
     # Signatures
     table = doc.add_table(rows=1, cols=2)

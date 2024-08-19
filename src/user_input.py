@@ -9,4 +9,12 @@ def get_user_input():
             break
         work_list.append(work)
 
-    return contract_number, location, doc_date, work_list
+        # Ввод стоимости
+    while True:
+        try:
+            total_cost = float(input("Введите стоимость работ (в рублях): "))
+            break
+        except ValueError:
+            print("Пожалуйста, введите числовое значение.")
+
+    return contract_number, location, doc_date, work_list, total_cost

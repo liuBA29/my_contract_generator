@@ -10,11 +10,11 @@ def main():
     completion = fetch_completion_of_work()
 
     # Получение пользовательского ввода
-    contract_number, location, doc_date, work_list = get_user_input()
+    contract_number, location, doc_date, work_list, total_cost = get_user_input()
 
     # Генерация документа
     work_list = work_list  # Замените на фактический список работ
-    generate_docx(customer, work_list, payment_term, completion, contract_number, location, doc_date)
+    generate_docx(customer, work_list, payment_term, completion, contract_number, location, doc_date, total_cost)
     print(f"Документ сохранен в папке docs_out под именем doc_{contract_number}.docx")
 
 if __name__ == "__main__":
