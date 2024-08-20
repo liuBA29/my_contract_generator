@@ -1,16 +1,34 @@
-from num2words import num2words
+import sqlite3
+import os
+
+# Абсолютный путь к базе данных
+DB_PATH = os.path.abspath('../data/customers.db')
 
 
-def number_to_words(number):
-    if number < 0:
-        return "Отрицательные числа не поддерживаются."
+def print_table_contents(table_name):
+    try:
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+        c.execute(f'SELECT * FROM {table_name}')
+        rows = c.fetchall()
+        conn.close()
 
-    # Преобразование числа в слова
-    return num2words(number, lang='ru', to='cardinal')
+        if rows:
+            print(f"Содержимое таблицы {table_name}:")
+            for row in rows:
+                print(row)
+        else:
+            print(f"Таблица {table_name} пуста или не существует.")
+    except sqlite3.Error as e:
+        print(f"Ошибка при работе с базой данных: {e}")
 
 
-# Примеры использования
-print(f"{number_to_words(250).capitalize()}")  # "Двести пятьдесят"
-print(number_to_words(36))  # "Тридцать шесть"
-print(number_to_words(1001))  # "Одна тысяча один"
-print(number_to_words(0))  # "Ноль"
+def main():
+    tables = ['customers', 'completion_of_work', 'payment_terms']  # Список таблиц для проверки
+    for table in tables:
+        print_table_contents(table)
+
+
+if __name__ == "__main__":
+    main()
+

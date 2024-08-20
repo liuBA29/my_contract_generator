@@ -67,12 +67,12 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     # Section 4
     days_in_words = num2words(30, lang='ru', to='cardinal')  # Пример для 30 дней
     doc.add_paragraph(
-        f'4. Условия оплаты: Заказчик производит {payment_term[2]} Работ в течение {days_in_words} банковских дней после подписания сторонами Акта сдачи-приемки работ, являющимся Приложением 2 к настоящему договору. Заказчик по своему усмотрению может произвести полную или частичную предоплату работ.',
+        f'4. Условия оплаты: Заказчик производит  {completion} Работ в течение {days_in_words} банковских дней после подписания сторонами Акта сдачи-приемки работ, являющимся Приложением 2 к настоящему договору. Заказчик по своему усмотрению может произвести полную или частичную предоплату работ.',
         style='Normal'
     )
 
     # Section 5
-    doc.add_paragraph(f'5. Окончание Работ: {completion[3]}.', style='Normal')
+    doc.add_paragraph(f'5. Окончание Работ: ......', style='Normal')
 
     # Section 6
     doc.add_paragraph(
