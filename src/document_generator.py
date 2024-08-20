@@ -4,6 +4,8 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from num2words import num2words
 import os
 
+
+
 def generate_docx(customer, work_list, payment_term, completion, contract_number, location,
                   doc_date, total_cost):
     doc = Document()
@@ -56,20 +58,16 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     kopecks = round(kopecks * 100)  # Округление до целых копеек
     sum_in_words = num2words(rubles, lang='ru', to='cardinal')
 
-
     doc.add_paragraph(
         f'3. Стоимость работ, согласно Приложению 1 к настоящему договору, составляет {total_cost:.2f} '
         f'({sum_in_words.capitalize()} белорусских рублей 00 коп.). Без НДС.',
         style='Normal'
     )
 
-
-
-
     # Section 4
     days_in_words = num2words(30, lang='ru', to='cardinal')  # Пример для 30 дней
     doc.add_paragraph(
-        f'4. Условия оплаты: Заказчик производит {payment_term[1]} Работ в течение {days_in_words} банковских дней после подписания сторонами Акта сдачи-приемки работ, являющимся Приложением 2 к настоящему договору. Заказчик по своему усмотрению может произвести полную или частичную предоплату работ.',
+        f'4. Условия оплаты: Заказчик производит {payment_term[2]} Работ в течение {days_in_words} банковских дней после подписания сторонами Акта сдачи-приемки работ, являющимся Приложением 2 к настоящему договору. Заказчик по своему усмотрению может произвести полную или частичную предоплату работ.',
         style='Normal'
     )
 
@@ -104,7 +102,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
 
     # Fill in table
     row_cells = table.rows[1].cells
-    row_cells[0].text = (
+    text_ispolnitel = (
         'ИП Панченко К.А.\n'
         '220007 г.Минск, ул.Жуковского 9/2-6\n'
         'IBAN: BY47MTBK30130001093300064929\n'
@@ -112,13 +110,22 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
         'г.Минск, ул.Толстого, 10\n'
         'УНП 191085820'
     )
-    row_cells[1].text = (
+    text_zakazchik = (
         f'{customer[1]}\n'
         f'{customer[5]}\n'
         f'УНП: {customer[6]}\n'
         f'ОКПО: {customer[7]}\n'
         f'Р/С: {customer[8]}'
     )
+
+    # Set text and font size for the first cell
+    p_ispolnitel = row_cells[0].paragraphs[0]
+    p_ispolnitel.add_run(text_ispolnitel).font.size = Pt(9)
+
+    # Set text and font size for the second cell
+    p_zakazchik = row_cells[1].paragraphs[0]
+    p_zakazchik.add_run(text_zakazchik).font.size = Pt(9)
+
 
     # Signatures
     table = doc.add_table(rows=1, cols=2)
@@ -165,29 +172,30 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
         cell.paragraphs[0].runs[0].font.size = Pt(12)
 
     # Add data to the table
-    total_sum = 0
+    num_works = len(work_list)
+    price_per_work = total_cost / num_works  # Рассчитываем стоимость на каждую работу
+
     for idx, work in enumerate(work_list, 1):
         row_cells = table.add_row().cells
         row_cells[0].text = str(idx)
         row_cells[1].text = work
-        row_cells[2].text = str(payment_term[1])
+        row_cells[2].text = f'{price_per_work:.2f}'  # Записываем рассчитанную стоимость
         row_cells[2].paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
-        total_sum += payment_term[1]
 
     # Total row
     row_cells = table.add_row().cells
     row_cells[0].text = 'Итого:'
     cell = row_cells[1]
     cell.merge(row_cells[2])
-    cell.text = str(total_sum)
+    cell.text = f'{total_cost:.2f}'
     cell.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
     for run in cell.paragraphs[0].runs:
         run.font.bold = True
         run.font.size = Pt(12)
 
     # Total sum
-    sum_total = total_sum
-    doc.add_paragraph(f'Итого стоимость работ: {sum_total:.2f} ({num2words(sum_total, lang="ru", to="currency")}). Без НДС.', style='Normal')
+    sum_total = total_cost
+    doc.add_paragraph(f'Итого стоимость работ: {total_cost:.2f} ({sum_in_words.capitalize()} белорусских рублей 00 коп.). Без НДС.', style='Normal')
 
     # Signatures
     table = doc.add_table(rows=1, cols=2)
