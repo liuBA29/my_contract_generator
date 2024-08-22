@@ -4,8 +4,6 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from num2words import num2words
 import os
 
-
-
 def generate_docx(customer, work_list, payment_term, completion, contract_number, location,
                   doc_date, total_cost):
     doc = Document()
@@ -40,17 +38,30 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
 
     # Main text
     p = doc.add_paragraph()
+    p.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
     p.add_run(
-        f"{customer[1]}, в лице {customer[9]} {customer[2]}, действующего на основании {customer[3]}, именуемое в дальнейшем ЗАКАЗЧИК, с одной стороны, и индивидуальный предприниматель Панченко Константин Александрович, действующий в качестве индивидуального предпринимателя на основании регистрационного свидетельства 0157617, выданного МГИК «04» декабря 2008г., именуемый в дальнейшем ИСПОЛНИТЕЛЬ, с другой стороны, заключили настоящий договор о нижеследующем:\n\n"
+        f"{customer[1]}, в лице {customer[9]} {customer[2]}, действующего на основании {customer[3]}, именуемое в дальнейшем ЗАКАЗЧИК, "
+        f"с одной стороны, и индивидуальный предприниматель Панченко Константин Александрович, действующий в качестве индивидуального "
+        f"предпринимателя на основании регистрационного свидетельства 0157617, выданного МГИК «04» декабря 2008г., именуемый в дальнейшем "
+        f"ИСПОЛНИТЕЛЬ, с другой стороны, заключили настоящий договор о нижеследующем:"
     ).font.size = Pt(12)
 
     # Section 1
-    doc.add_paragraph('1. ЗАКАЗЧИК поручает, а ИСПОЛНИТЕЛЬ принимает на себя выполнение следующих работ:', style='Normal').runs[0].font.bold = True
+    p = doc.add_paragraph('1. ЗАКАЗЧИК поручает, а ИСПОЛНИТЕЛЬ принимает на себя выполнение следующих работ:',
+                          style='Normal')
+    p.runs[0].font.bold = True
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
+
     for idx, work in enumerate(work_list, 1):
-        doc.add_paragraph(f"1.{idx}. {work}", style='Normal')
+        p = doc.add_paragraph(f"1.{idx}. {work}", style='Normal')
+        p.paragraph_format.space_before = Pt(0)
+        p.paragraph_format.space_after = Pt(0)
 
     # Section 2
-    doc.add_paragraph(f'2. Место проведения работ: {location}.', style='Normal')
+    p = doc.add_paragraph(f'2. Место проведения работ: {location}.', style='Normal')
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
 
     # Section 3
     rubles, kopecks = divmod(total_cost, 1)
@@ -58,33 +69,65 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     kopecks = round(kopecks * 100)  # Округление до целых копеек
     sum_in_words = num2words(rubles, lang='ru', to='cardinal')
 
-    doc.add_paragraph(
+    p = doc.add_paragraph(
         f'3. Стоимость работ, согласно Приложению 1 к настоящему договору, составляет {total_cost:.2f} '
         f'({sum_in_words.capitalize()} белорусских рублей 00 коп.). Без НДС.',
         style='Normal'
     )
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
 
     # Section 4
     days_in_words = num2words(30, lang='ru', to='cardinal')  # Пример для 30 дней
-    doc.add_paragraph(
-        f'4. Условия оплаты: Заказчик производит  {completion} Работ в течение {days_in_words} банковских дней после подписания сторонами Акта сдачи-приемки работ, являющимся Приложением 2 к настоящему договору. Заказчик по своему усмотрению может произвести полную или частичную предоплату работ.',
-        style='Normal'
-    )
+    if completion[3] == "предоплата" and payment_term[3] != 100:
+        p = doc.add_paragraph(
+            f'4. Условия оплаты: Заказчик производит {payment_term[3]}% предоплату работ в течение 5(пяти) рабочих дней с момента подписания сторонами настоящего договора. {completion[4]} '
+            f' 5(пяти) банковских дней после подписания сторонами Акта сдачи-приемки работ,'
+            f' являющимся Приложением 2 к настоящему договору. Заказчик по своему усмотрению может произвести полную '
+            f'предоплату работ.',
+            style='Normal'
+        )
+    elif completion[3] == "предоплата" and payment_term[3] == 100:
+        p = doc.add_paragraph(
+            f'4. Условия оплаты: Заказчик производит {payment_term[3]}% предоплату работ в течение 5(пяти) рабочих дней с момента '
+            f'подписания сторонами настоящего договора. ',
+            style='Normal'
+        )
+    else:
+        p = doc.add_paragraph(
+            f'4. Условия оплаты: Заказчик производит оплату Работ в течение 5(пяти) банковских дней после подписания '
+            f'сторонами Акта сдачи-приемки работ, являющегося '
+            f'Приложением 2 к настоящему договору. Заказчик, по своему усмотрению, может произвести полную или '
+            f'частичную предоплату работ.',
+            style='Normal')
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
 
     # Section 5
-    doc.add_paragraph(f'5. Окончание Работ: ......', style='Normal')
+    if completion[3] == "предоплата":
+        p = doc.add_paragraph(f'5. Окончание Работ: в течение 7(семи) рабочих дней с момента '
+                              f'момента поступления на счет Исполнителя {payment_term[3]}% предоплаты.', style='Normal')
+    else:
+        p = doc.add_paragraph(f'5. Окончание Работ: в течение 7(семи) рабочих дней с момента подписания '
+                              f'сторонами настоящего договора.', style='Normal')
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
 
     # Section 6
-    doc.add_paragraph(
+    p = doc.add_paragraph(
         '6. Заказчик в день получения акта сдачи-приемки работ обязан вернуть Исполнителю подписанный акт сдачи-приемки работ или мотивированный отказ от приемки работ.',
         style='Normal'
     )
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
 
     # Section 7
-    doc.add_paragraph(
+    p = doc.add_paragraph(
         '7. По всем остальным вопросам стороны руководствуются действующим законодательством Республики Беларусь.',
         style='Normal'
     )
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
 
     # Party details in a table
     doc.add_paragraph('Реквизиты сторон:', style='Normal').runs[0].font.bold = True
@@ -96,7 +139,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     hdr_cells[0].text = 'Исполнитель'
     hdr_cells[1].text = 'Заказчик'
     for cell in hdr_cells:
-        cell.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+        cell.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
         cell.paragraphs[0].runs[0].font.bold = True
         cell.paragraphs[0].runs[0].font.size = Pt(10)
 
@@ -126,10 +169,18 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     p_zakazchik = row_cells[1].paragraphs[0]
     p_zakazchik.add_run(text_zakazchik).font.size = Pt(9)
 
+    # Set column widths
+    table.columns[0].width = Pt(150)  # Example width for the first column
+    table.columns[1].width = Pt(250)  # Example width for the second column
+
 
     # Signatures
     table = doc.add_table(rows=1, cols=2)
-    table.autofit = True
+    table.autofit = False
+
+    # Set column widths
+    table.columns[0].width = Pt(150)  # Example width for the first column
+    table.columns[1].width = Pt(450)  # Example width for the second column
 
     cell1 = table.cell(0, 0)
     cell1.text = 'Исполнитель_________(К.А. Панченко)'
@@ -137,8 +188,8 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     cell1.paragraphs[0].runs[0].font.size = Pt(9)
 
     cell2 = table.cell(0, 1)
-    cell2.text = f'Заказчик___________({customer[2]})'
-    cell2.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+    cell2.text = f'Заказчик___________({customer[4]})'
+    cell2.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
     cell2.paragraphs[0].runs[0].font.size = Pt(9)
 
     p = doc.add_paragraph()
@@ -194,8 +245,22 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
         run.font.size = Pt(12)
 
     # Total sum
+    # Total sum
     sum_total = total_cost
-    doc.add_paragraph(f'Итого стоимость работ: {total_cost:.2f} ({sum_in_words.capitalize()} белорусских рублей 00 коп.). Без НДС.', style='Normal')
+    paragraph = doc.add_paragraph(style='Normal')
+    paragraph.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT  # Выровнено по левому краю
+
+    # Первая часть текста
+    run = paragraph.add_run(f'Итого стоимость работ: ')
+    run.font.bold = True
+    run.font.size = Pt(10)
+
+    run = paragraph.add_run(f'{sum_in_words.capitalize()} белорусских рублей 00 копеек.\n')
+    run.font.size = Pt(10)
+
+    # Вторая часть текста на новой строке
+    run = paragraph.add_run('Без НДС.')
+    run.font.size = Pt(10)
 
     # Signatures
     table = doc.add_table(rows=1, cols=2)
@@ -207,8 +272,8 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     cell1.paragraphs[0].runs[0].font.size = Pt(9)
 
     cell2 = table.cell(0, 1)
-    cell2.text = f'Заказчик___________({customer[2]})'
-    cell2.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+    cell2.text = f'Заказчик___________({customer[4]})'
+    cell2.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
     cell2.paragraphs[0].runs[0].font.size = Pt(9)
 
     # Create output directory if it does not exist

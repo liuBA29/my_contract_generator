@@ -1,6 +1,6 @@
 import os
 import sqlite3
-from src.database import fetch_customer_data, fetch_all_payment_terms, fetch_completion_of_work
+from src.database import fetch_customer_data, fetch_completion_of_work_by_condition, fetch_all_payment_terms, fetch_payment_terms_by_id
 from src.document_generator import generate_docx
 from src.user_input import get_user_input
 
@@ -20,41 +20,43 @@ def main():
         conn = sqlite3.connect(DB_PATH)
         cursor = conn.cursor()
 
+        # Вывод списка заказчиков
         cursor.execute('SELECT * FROM customers')
         customers = cursor.fetchall()
         display_options("Список заказчиков:", [(row[0], f"{row[1]} (директор: {row[4]})") for row in customers])
 
-        cursor.execute('SELECT * FROM completion_of_work')
-        completions = cursor.fetchall()
-        display_options("Список условий оплаты:", [(row[0], row[3]) for row in completions])
-
-        cursor.execute('SELECT * FROM payment_terms')
-        payments = cursor.fetchall()
-        display_options("Список процентов предоплаты:", [(row[0], f"{row[2]}%") for row in payments])
-
-        conn.close()
-    except sqlite3.Error as e:
-        print(f"Ошибка подключения к базе данных: {e}")
-        return
-
-    try:
         customer_id = int(input("Введите ID клиента: "))
         customer = fetch_customer_data(customer_id)
 
-        completion_id = int(input("Введите ID условия оплаты: "))
-        completion = fetch_completion_of_work(completion_id)
+        # Ввод условий оплаты
+        payment_condition = input("Введите тип оплаты (предоплата/постоплата): ").strip().lower()
+        completions = fetch_completion_of_work_by_condition(payment_condition)
 
-        term_id = int(input("Введите ID процента предоплаты: "))
-        payment = fetch_all_payment_terms(term_id)
-
-        if payment is None:
+        if not completions:
             print("Условия оплаты не найдены. Завершение программы.")
             return
 
+        display_options("Список условий оплаты:", [(row[0], row[3]) for row in completions])
+
+        if payment_condition == 'предоплата':
+            payments = fetch_all_payment_terms()
+            display_options("Список процентов предоплаты:", [(row[0], f"{row[1]}%") for row in payments[1:]])
+            term_id = int(input("Введите ID процента предоплаты: "))
+            payment = fetch_payment_terms_by_id(term_id)
+        else:
+            payment = None
+
+        if payment_condition == 'предоплата' and payment is None:
+            print("Процент предоплаты не найден. Завершение программы.")
+            return
+
+        # Сбор информации для договора
         contract_number, location, doc_date, work_list, total_cost = get_user_input()
 
-        generate_docx(customer, work_list, payment, completion, contract_number, location, doc_date, total_cost)
+        # Генерация документа
+        generate_docx(customer, work_list, payment, completions[0], contract_number, location, doc_date, total_cost)
         print(f"Документ сохранен в папке docs_out под именем doc_{contract_number}.docx")
+
     except ValueError:
         print("Неверный ввод. Пожалуйста, введите целое число для ID.")
     except Exception as e:
