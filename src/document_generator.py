@@ -171,7 +171,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
 
     # Set column widths
     table.columns[0].width = Pt(150)  # Example width for the first column
-    table.columns[1].width = Pt(250)  # Example width for the second column
+    table.columns[1].width = Pt(350)  # Example width for the second column
 
 
     # Signatures
@@ -188,7 +188,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     cell1.paragraphs[0].runs[0].font.size = Pt(9)
 
     cell2 = table.cell(0, 1)
-    cell2.text = f'Заказчик___________({customer[4]})'
+    cell2.text = f'Заказчик_________({customer[4]})'
     cell2.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
     cell2.paragraphs[0].runs[0].font.size = Pt(9)
 
