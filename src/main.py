@@ -13,7 +13,7 @@ def display_options(title, options):
 def main():
     print(f"Текущий рабочий каталог: {os.getcwd()}")
 
-    DB_PATH = os.path.abspath(os.path.join(os.getcwd(), 'data/customers.db'))
+    DB_PATH = os.path.abspath(os.path.join(os.getcwd(), '../data/customers.db'))
     print(f"Проверка базы данных по пути: {DB_PATH}")
 
     try:

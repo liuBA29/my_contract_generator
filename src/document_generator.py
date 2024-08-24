@@ -277,9 +277,9 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     cell2.paragraphs[0].runs[0].font.size = Pt(9)
 
     # Create output directory if it does not exist
-    os.makedirs('docs_out', exist_ok=True)
+    os.makedirs('../docs_out', exist_ok=True)
 
     # Save document with contract number
-    file_name = f'docs_out/contract_{contract_number}.docx'
+    file_name = f'../docs_out/contract_{contract_number}.docx'
     doc.save(file_name)
     print(f'Документ сохранен как {file_name}')
