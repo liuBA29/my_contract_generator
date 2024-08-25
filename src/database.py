@@ -19,6 +19,20 @@ def fetch_customer_data(customer_id):
         return None
     return customer
 
+
+def fetch_all_customers():
+    try:
+        conn = get_db_connection()
+        c = conn.cursor()
+        c.execute('SELECT id, organization_name FROM customers')  # Измените 'customers' на реальное имя вашей таблицы
+        customers = c.fetchall()
+        conn.close()
+    except sqlite3.Error as e:
+        print(f"Database error: {e}")
+        return []
+    return customers
+
+
 def fetch_completion_of_work_by_condition(payment_condition):
     try:
         conn = get_db_connection()

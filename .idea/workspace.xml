@@ -5,7 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="824d2b25-ff24-4f66-a891-88d960aef178" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/src/check1.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/test2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/structure" beforeDir="false" afterPath="$PROJECT_DIR$/structure" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -39,9 +43,11 @@
     &quot;Python.check1.executor&quot;: &quot;Run&quot;,
     &quot;Python.database.executor&quot;: &quot;Run&quot;,
     &quot;Python.document_generator.executor&quot;: &quot;Run&quot;,
+    &quot;Python.gui.executor&quot;: &quot;Run&quot;,
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Python.python src/main.py.executor&quot;: &quot;Run&quot;,
     &quot;Python.test.executor&quot;: &quot;Run&quot;,
+    &quot;Python.test2.executor&quot;: &quot;Run&quot;,
     &quot;Python.test_gui.executor&quot;: &quot;Run&quot;,
     &quot;Python.user_input.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
