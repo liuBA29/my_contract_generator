@@ -1,5 +1,7 @@
 import sqlite3
 import os
+import tkinter as tk
+from tkinter import ttk
 
 # Абсолютный путь к базе данных
 DB_PATH = os.path.abspath('../data/customers.db')
@@ -27,6 +29,7 @@ def main():
     tables = ['customers', 'completion_of_work', 'payment_terms']  # Список таблиц для проверки
     for table in tables:
         print_table_contents(table)
+
 
 
 if __name__ == "__main__":
