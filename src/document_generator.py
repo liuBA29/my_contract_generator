@@ -12,7 +12,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     style = doc.styles['Normal']
     font = style.font
     font.name = 'Courier New'
-    font.size = Pt(12)
+    font.size = Pt(10)
     for section in doc.sections:
         section.left_margin = Inches(0.7)
         section.right_margin = Inches(0.5)
@@ -21,7 +21,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     p = doc.add_paragraph(f'ДОГОВОР № {contract_number}', style='Normal')
     p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     run = p.runs[0]
-    run.font.size = Pt(12)
+    run.font.size = Pt(11)
     run.font.bold = True
 
     # Date
@@ -44,7 +44,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
         f"с одной стороны, и индивидуальный предприниматель Панченко Константин Александрович, действующий в качестве индивидуального "
         f"предпринимателя на основании регистрационного свидетельства 0157617, выданного МГИК «04» декабря 2008г., именуемый в дальнейшем "
         f"ИСПОЛНИТЕЛЬ, с другой стороны, заключили настоящий договор о нижеследующем:"
-    ).font.size = Pt(12)
+    ).font.size = Pt(10)
 
     # Section 1
     p = doc.add_paragraph('1. ЗАКАЗЧИК поручает, а ИСПОЛНИТЕЛЬ принимает на себя выполнение следующих работ:',
@@ -54,7 +54,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     p.paragraph_format.space_after = Pt(0)
 
     for idx, work in enumerate(work_list, 1):
-        p = doc.add_paragraph(f"1.{idx}. {work}", style='Normal')
+        p = doc.add_paragraph(f"1.{idx}. {work}.", style='Normal')
         p.paragraph_format.space_before = Pt(0)
         p.paragraph_format.space_after = Pt(0)
 
@@ -109,7 +109,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
                               f'момента поступления на счет Исполнителя {payment_term[3]}% предоплаты.', style='Normal')
     else:
         p = doc.add_paragraph(f'5. Окончание Работ: в течение 7(семи) рабочих дней с момента подписания '
-                              f'сторонами настоящего договора.', style='Normal')
+                              f'сторонами настоящего договора. Сроки выполнения Работ могут быть продлены по согласованию сторон.', style='Normal')
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(0)
 
@@ -130,44 +130,53 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     p.paragraph_format.space_after = Pt(0)
 
     # Party details in a table
-    doc.add_paragraph('Реквизиты сторон:', style='Normal').runs[0].font.bold = True
-    table = doc.add_table(rows=2, cols=2)
+    recv=doc.add_paragraph('Реквизиты сторон:', style='Normal')
+    recv.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+    recv.runs[0].font.bold=True
+    recv.paragraph_format.space_before = Pt(0)
+    recv.paragraph_format.space_after = Pt(0)
+
+    table = doc.add_table(rows=1, cols=2)
     table.columns[0].width = Pt(200)
     table.columns[1].width = Pt(200)
 
-    hdr_cells = table.rows[0].cells
-    hdr_cells[0].text = 'Исполнитель'
-    hdr_cells[1].text = 'Заказчик'
-    for cell in hdr_cells:
-        cell.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
-        cell.paragraphs[0].runs[0].font.bold = True
-        cell.paragraphs[0].runs[0].font.size = Pt(10)
-
     # Fill in table
-    row_cells = table.rows[1].cells
-    text_ispolnitel = (
-        'ИП Панченко К.А.\n'
+    row_cells = table.rows[0].cells
+    # Set text and font size for the first cell (Исполнитель)
+    p_ispolnitel = row_cells[0].paragraphs[0]
+
+    # Создаем жирный Run для "ИП Панченко К.А."
+    run_ispolnitel_bold = p_ispolnitel.add_run('ИП Панченко К.А.\n')
+    run_ispolnitel_bold.font.size = Pt(9)
+    run_ispolnitel_bold.bold = True
+
+    # Добавляем остальной текст (обычным шрифтом)
+    run_ispolnitel = p_ispolnitel.add_run(
         '220007 г.Минск, ул.Жуковского 9/2-6\n'
         'IBAN: BY47MTBK30130001093300064929\n'
         'ЗАО «МТБанк», BIC MTBKBY22,\n'
         'г.Минск, ул.Толстого, 10\n'
         'УНП 191085820'
     )
-    text_zakazchik = (
-        f'{customer[1]}\n'
+    run_ispolnitel.font.size = Pt(9)
+
+    # Set text and font size for the second cell (Заказчик)
+    p_zakazchik = row_cells[1].paragraphs[0]
+
+    # Создаем жирный Run для названия заказчика
+    run_zakazchik_bold = p_zakazchik.add_run(f'{customer[1]}\n')
+    run_zakazchik_bold.font.size = Pt(9)
+    run_zakazchik_bold.bold = True
+
+    # Добавляем остальной текст (обычным шрифтом)
+    run_zakazchik = p_zakazchik.add_run(
         f'{customer[5]}\n'
+        f'IBAN: {customer[8]}\n'
         f'УНП: {customer[6]}\n'
         f'ОКПО: {customer[7]}\n'
-        f'Р/С: {customer[8]}'
     )
-
-    # Set text and font size for the first cell
-    p_ispolnitel = row_cells[0].paragraphs[0]
-    p_ispolnitel.add_run(text_ispolnitel).font.size = Pt(9)
-
-    # Set text and font size for the second cell
-    p_zakazchik = row_cells[1].paragraphs[0]
-    p_zakazchik.add_run(text_zakazchik).font.size = Pt(9)
+    run_zakazchik.font.size = Pt(9)
 
     # Set column widths
     table.columns[0].width = Pt(150)  # Example width for the first column
@@ -200,7 +209,9 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
     run = p.runs[0]
     run.bold = True
-    run.font.size = Pt(12)
+    run.font.size = Pt(11)
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
 
     doc.add_paragraph('Протокол согласования договорной цены', style='Normal').alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
 
@@ -220,7 +231,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     for cell in hdr_cells:
         cell.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
         cell.paragraphs[0].runs[0].font.bold = True
-        cell.paragraphs[0].runs[0].font.size = Pt(12)
+        cell.paragraphs[0].runs[0].font.size = Pt(10)
 
     # Add data to the table
     num_works = len(work_list)
@@ -242,7 +253,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     cell.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
     for run in cell.paragraphs[0].runs:
         run.font.bold = True
-        run.font.size = Pt(12)
+        run.font.size = Pt(10)
 
     # Total sum
     # Total sum

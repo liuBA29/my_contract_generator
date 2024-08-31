@@ -109,6 +109,9 @@ payment_condition_combobox.grid(row=2, column=1, padx=10, pady=5)
 tk.Label(root, text="Выберите процент предоплаты:").grid(row=3, column=0, sticky="w", padx=10, pady=5)
 payment_term_var = tk.StringVar()
 payment_term_combobox = ttk.Combobox(root, textvariable=payment_term_var, state="disabled")
+
+
+
 payment_term_combobox.grid(row=3, column=1, padx=10, pady=5)
 
 payment_condition_combobox.bind("<<ComboboxSelected>>", update_payment_terms)

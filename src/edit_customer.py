@@ -37,6 +37,22 @@ def update_customer():
     else:
         messagebox.showwarning("Ошибка", "Пожалуйста, заполните все поля.")
 
+# Функция для удаления клиента
+def delete_customer():
+    selected_item = tree.focus()
+    if not selected_item:
+        messagebox.showwarning("Ошибка", "Пожалуйста, выберите клиента для удаления.")
+        return
+
+    customer_id = tree.item(selected_item)['values'][0]
+    response = messagebox.askyesno("Подтверждение", "Вы уверены, что хотите удалить этого клиента?")
+    if response:
+        cursor.execute("DELETE FROM customers WHERE id=?", (customer_id,))
+        conn.commit()
+        messagebox.showinfo("Успех", "Клиент успешно удален!")
+        load_customers()
+        clear_entries()
+
 # Функция для загрузки клиентов в таблицу
 def load_customers():
     for row in tree.get_children():
@@ -98,12 +114,12 @@ root.title("Редактирование клиентов")
 root.geometry("1200x600")
 
 # Таблица для отображения клиентов
-tree = ttk.Treeview(root, columns=('ID', 'Название организации', 'ФИО главы', 'На основании', 'ФИО руководителя', 'Адрес', 'УНП', 'ОКПО', 'Р/счет', 'Должность'), show='headings')
+tree = ttk.Treeview(root, columns=('ID', 'Название организации', 'ФИО главы', 'На основании', 'ИО Фамилия руководителя', 'Адрес', 'УНП', 'ОКПО', 'Р/счет', 'Должность'), show='headings')
 tree.heading('ID', text='ID')
 tree.heading('Название организации', text='Название организации')
 tree.heading('ФИО главы', text='ФИО главы')
 tree.heading('На основании', text='На основании')
-tree.heading('ФИО руководителя', text='ФИО руководителя')
+tree.heading('ИО Фамилия руководителя', text='ИО Фамилия руководителя')
 tree.heading('Адрес', text='Адрес')
 tree.heading('УНП', text='УНП')
 tree.heading('ОКПО', text='ОКПО')
@@ -132,17 +148,17 @@ tk.Label(root, text="Название организации").grid(row=2, colum
 entry_organization_name = tk.Entry(root)
 entry_organization_name.grid(row=2, column=1, sticky='ew')
 
-tk.Label(root, text="ФИО руководителя").grid(row=3, column=0, sticky='e')
-entry_fio_rukovoditelya = tk.Entry(root)
-entry_fio_rukovoditelya.grid(row=3, column=1, sticky='ew')
+tk.Label(root, text="ФИО главы организации").grid(row=3, column=0, sticky='e')
+entry_ruler_name = tk.Entry(root)
+entry_ruler_name.grid(row=3, column=1, sticky='ew')
 
 tk.Label(root, text="На основании").grid(row=4, column=0, sticky='e')
 entry_na_osnovanii = tk.Entry(root)
 entry_na_osnovanii.grid(row=4, column=1, sticky='ew')
 
-tk.Label(root, text="ФИО главы организации").grid(row=5, column=0, sticky='e')
-entry_ruler_name = tk.Entry(root)
-entry_ruler_name.grid(row=5, column=1, sticky='ew')
+tk.Label(root, text="ИО Фамилия руководителя").grid(row=5, column=0, sticky='e')
+entry_fio_rukovoditelya = tk.Entry(root)
+entry_fio_rukovoditelya.grid(row=5, column=1, sticky='ew')
 
 tk.Label(root, text="Адрес").grid(row=6, column=0, sticky='e')
 entry_address = tk.Entry(root)
@@ -167,6 +183,9 @@ entry_dolhnost.grid(row=10, column=1, sticky='ew')
 # Кнопка для сохранения изменений
 tk.Button(root, text="Сохранить изменения", command=update_customer).grid(row=11, column=0, columnspan=2)
 
+# Кнопка для удаления клиента
+tk.Button(root, text="Удалить клиента", command=delete_customer).grid(row=12, column=0, columnspan=2)
+
 # Настройка расширения для колонок и строк
 root.grid_columnconfigure(1, weight=1)
 root.grid_rowconfigure(0, weight=1)
@@ -179,4 +198,3 @@ root.mainloop()
 
 # Закрытие соединения с базой данных при закрытии приложения
 conn.close()
-
