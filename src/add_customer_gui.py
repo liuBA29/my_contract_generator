@@ -18,7 +18,8 @@ cursor.execute('''
         unp TEXT,
         okpo TEXT,
         rs TEXT,
-        dolhnost TEXT
+        dolhnost TEXT,
+        short_title TEXT
     )
 ''')
 conn.commit()
@@ -34,12 +35,13 @@ def add_customer():
     okpo = entry_okpo.get()
     rs = entry_rs.get()
     dolhnost = entry_dolhnost.get()
+    short_title = entry_short_title.get()
 
-    if all([organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost]):
+    if all([organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost, short_title]):
         cursor.execute('''
-            INSERT INTO customers (organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        ''', (organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost))
+            INSERT INTO customers (organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost, short_title)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ''', (organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost, short_title))
         conn.commit()
         messagebox.showinfo("Успех", "Клиент успешно добавлен!")
         clear_entries()
@@ -56,6 +58,7 @@ def clear_entries():
     entry_okpo.delete(0, tk.END)
     entry_rs.delete(0, tk.END)
     entry_dolhnost.delete(0, tk.END)
+    entry_short_title.delete(0, tk.END)
 
 # Создаем главное окно
 root = tk.Tk()
@@ -67,16 +70,16 @@ entry_organization_name = tk.Entry(root)
 entry_organization_name.grid(row=0, column=1)
 
 tk.Label(root, text="ФИО руководителя").grid(row=1, column=0)
-entry_fio_rukovoditelya = tk.Entry(root)
-entry_fio_rukovoditelya.grid(row=1, column=1)
+entry_ruler_name = tk.Entry(root)
+entry_ruler_name.grid(row=1, column=1)
 
 tk.Label(root, text="На основании").grid(row=2, column=0)
 entry_na_osnovanii = tk.Entry(root)
 entry_na_osnovanii.grid(row=2, column=1)
 
-tk.Label(root, text="ФИО главы организации").grid(row=3, column=0)
-entry_ruler_name = tk.Entry(root)
-entry_ruler_name.grid(row=3, column=1)
+tk.Label(root, text="ИО Фамилия главы организации").grid(row=3, column=0)
+entry_fio_rukovoditelya = tk.Entry(root)
+entry_fio_rukovoditelya.grid(row=3, column=1)
 
 tk.Label(root, text="Адрес").grid(row=4, column=0)
 entry_address = tk.Entry(root)
@@ -90,7 +93,7 @@ tk.Label(root, text="ОКПО").grid(row=6, column=0)
 entry_okpo = tk.Entry(root)
 entry_okpo.grid(row=6, column=1)
 
-tk.Label(root, text="Р/счет").grid(row=7, column=0)
+tk.Label(root, text="Р/счет, банк, S.W.I.F.T., адрес банка").grid(row=7, column=0)
 entry_rs = tk.Entry(root)
 entry_rs.grid(row=7, column=1)
 
@@ -98,8 +101,13 @@ tk.Label(root, text="Должность").grid(row=8, column=0)
 entry_dolhnost = tk.Entry(root)
 entry_dolhnost.grid(row=8, column=1)
 
+
+tk.Label(root, text="Сокращенное название организации").grid(row=9, column=0)
+entry_short_title = tk.Entry(root)
+entry_short_title.grid(row=9, column=1)
+
 # Кнопка для добавления клиента
-tk.Button(root, text="Добавить клиента", command=add_customer).grid(row=9, column=0, columnspan=2)
+tk.Button(root, text="Добавить клиента", command=add_customer).grid(row=10, column=0, columnspan=2)
 
 # Запуск основного цикла приложения
 root.mainloop()

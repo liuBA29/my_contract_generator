@@ -23,13 +23,14 @@ def update_customer():
     okpo = entry_okpo.get()
     rs = entry_rs.get()
     dolhnost = entry_dolhnost.get()
+    short_title = entry_short_title.get()
 
-    if all([organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost]):
+    if all([organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost, short_title]):
         cursor.execute('''
             UPDATE customers 
-            SET organization_name=?, ruler_name=?, na_osnovanii=?, fio_rukovoditelya=?, address=?, unp=?, okpo=?, rs=?, dolhnost=?
+            SET organization_name=?, ruler_name=?, na_osnovanii=?, fio_rukovoditelya=?, address=?, unp=?, okpo=?, rs=?, dolhnost=?, short_title=?
             WHERE id=?
-        ''', (organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost, customer_id))
+        ''', (organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost, short_title, customer_id))
         conn.commit()
         messagebox.showinfo("Успех", "Данные клиента успешно обновлены!")
         load_customers()
@@ -96,6 +97,9 @@ def load_customer_data(event):
     entry_dolhnost.delete(0, tk.END)
     entry_dolhnost.insert(0, customer_data[9])
 
+    entry_short_title.delete(0, tk.END)
+    entry_short_title.insert(0, customer_data[10])
+
 # Функция для очистки полей ввода
 def clear_entries():
     entry_organization_name.delete(0, tk.END)
@@ -107,6 +111,7 @@ def clear_entries():
     entry_okpo.delete(0, tk.END)
     entry_rs.delete(0, tk.END)
     entry_dolhnost.delete(0, tk.END)
+    entry_short_title.delete(0, tk.END)
 
 # Создаем главное окно
 root = tk.Tk()
@@ -114,7 +119,7 @@ root.title("Редактирование клиентов")
 root.geometry("1200x600")
 
 # Таблица для отображения клиентов
-tree = ttk.Treeview(root, columns=('ID', 'Название организации', 'ФИО главы', 'На основании', 'ИО Фамилия руководителя', 'Адрес', 'УНП', 'ОКПО', 'Р/счет', 'Должность'), show='headings')
+tree = ttk.Treeview(root, columns=('ID', 'Название организации', 'ФИО главы', 'На основании', 'ИО Фамилия руководителя', 'Адрес', 'УНП', 'ОКПО', 'Р/счет и реки банка', 'Должность', 'Сокращенное название'), show='headings')
 tree.heading('ID', text='ID')
 tree.heading('Название организации', text='Название организации')
 tree.heading('ФИО главы', text='ФИО главы')
@@ -123,8 +128,9 @@ tree.heading('ИО Фамилия руководителя', text='ИО Фами
 tree.heading('Адрес', text='Адрес')
 tree.heading('УНП', text='УНП')
 tree.heading('ОКПО', text='ОКПО')
-tree.heading('Р/счет', text='Р/счет')
+tree.heading('Р/счет и реки банка', text='Р/счет и реки банка')
 tree.heading('Должность', text='Должность')
+tree.heading('Сокращенное название', text='Сокращенное название')
 tree.column('ID', width=30)
 
 # Создаем вертикальную полосу прокрутки
@@ -172,7 +178,7 @@ tk.Label(root, text="ОКПО").grid(row=8, column=0, sticky='e')
 entry_okpo = tk.Entry(root)
 entry_okpo.grid(row=8, column=1, sticky='ew')
 
-tk.Label(root, text="Р/счет").grid(row=9, column=0, sticky='e')
+tk.Label(root, text="Р/счет, SWIFT, адрес банка").grid(row=9, column=0, sticky='e')
 entry_rs = tk.Entry(root)
 entry_rs.grid(row=9, column=1, sticky='ew')
 
@@ -180,11 +186,15 @@ tk.Label(root, text="Должность").grid(row=10, column=0, sticky='e')
 entry_dolhnost = tk.Entry(root)
 entry_dolhnost.grid(row=10, column=1, sticky='ew')
 
+tk.Label(root, text="Сокращенное название организации").grid(row=11, column=0, sticky='e')
+entry_short_title = tk.Entry(root)
+entry_short_title.grid(row=11, column=1, sticky='ew')
+
 # Кнопка для сохранения изменений
-tk.Button(root, text="Сохранить изменения", command=update_customer).grid(row=11, column=0, columnspan=2)
+tk.Button(root, text="Сохранить изменения", command=update_customer).grid(row=12, column=0, columnspan=2)
 
 # Кнопка для удаления клиента
-tk.Button(root, text="Удалить клиента", command=delete_customer).grid(row=12, column=0, columnspan=2)
+tk.Button(root, text="Удалить клиента", command=delete_customer).grid(row=13, column=0, columnspan=2)
 
 # Настройка расширения для колонок и строк
 root.grid_columnconfigure(1, weight=1)
