@@ -45,11 +45,12 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
         f"предпринимателя на основании регистрационного свидетельства 0157617, выданного МГИК «04» декабря 2008г., именуемый в дальнейшем "
         f"ИСПОЛНИТЕЛЬ, с другой стороны, заключили настоящий договор о нижеследующем:"
     ).font.size = Pt(10)
-
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
     # Section 1
     p = doc.add_paragraph('1. ЗАКАЗЧИК поручает, а ИСПОЛНИТЕЛЬ принимает на себя выполнение следующих работ:',
                           style='Normal')
-    p.runs[0].font.bold = True
+
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(0)
 
@@ -81,7 +82,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     days_in_words = num2words(30, lang='ru', to='cardinal')  # Пример для 30 дней
     if completion[3] == "предоплата" and payment_term[3] != 100:
         p = doc.add_paragraph(
-            f'4. Условия оплаты: Заказчик производит {payment_term[3]}% предоплату работ в течение 5(пяти) рабочих дней с момента подписания сторонами настоящего договора. {completion[4]} '
+            f'4. Условия оплаты: Заказчик производит {payment_term[3]}% предоплату работ в течение 5(пяти) рабочих дней с момента подписания сторонами настоящего договора. {completion[4]}'
             f' 5(пяти) банковских дней после подписания сторонами Акта сдачи-приемки работ,'
             f' являющимся Приложением 2 к настоящему договору. Заказчик по своему усмотрению может произвести полную '
             f'предоплату работ.',
@@ -106,7 +107,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     # Section 5
     if completion[3] == "предоплата":
         p = doc.add_paragraph(f'5. Окончание Работ: в течение 7(семи) рабочих дней с момента '
-                              f'момента поступления на счет Исполнителя {payment_term[3]}% предоплаты.', style='Normal')
+                              f'поступления на счет Исполнителя {payment_term[3]}% предоплаты.', style='Normal')
     else:
         p = doc.add_paragraph(f'5. Окончание Работ: в течение 7(семи) рабочих дней с момента подписания '
                               f'сторонами настоящего договора. Сроки выполнения Работ могут быть продлены по согласованию сторон.', style='Normal')
@@ -165,7 +166,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     p_zakazchik = row_cells[1].paragraphs[0]
 
     # Создаем жирный Run для названия заказчика
-    run_zakazchik_bold = p_zakazchik.add_run(f'{customer[1]}\n')
+    run_zakazchik_bold = p_zakazchik.add_run(f'{customer[10]}\n')
     run_zakazchik_bold.font.size = Pt(9)
     run_zakazchik_bold.bold = True
 
@@ -173,8 +174,8 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     run_zakazchik = p_zakazchik.add_run(
         f'{customer[5]}\n'
         f'IBAN: {customer[8]}\n'
-        f'УНП: {customer[6]}\n'
-        f'ОКПО: {customer[7]}\n'
+        f'УНП: {customer[6]}, ОКПО: {customer[7]}\n'
+
     )
     run_zakazchik.font.size = Pt(9)
 

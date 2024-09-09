@@ -24,7 +24,7 @@ def fetch_all_customers():
     try:
         conn = get_db_connection()
         c = conn.cursor()
-        c.execute('SELECT id, organization_name FROM customers')  # Измените 'customers' на реальное имя вашей таблицы
+        c.execute('SELECT id, organization_name, short_title FROM customers')  # Измените 'customers' на реальное имя вашей таблицы
         customers = c.fetchall()
         conn.close()
     except sqlite3.Error as e:

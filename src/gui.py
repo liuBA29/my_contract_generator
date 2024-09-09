@@ -5,10 +5,35 @@ from src.database import (fetch_all_customers, fetch_customer_data, fetch_comple
                           fetch_all_payment_terms, fetch_payment_terms_by_id)
 from src.document_generator import generate_docx
 
+
+# Функция для фильтрации клиентов по введённому тексту
+def filter_customers(event):
+    search_term = customer_combobox.get().strip().lower()
+    filtered_customers = [f"{customer[0]} - {customer[2]}" for customer in customers if
+                          search_term in customer[2].lower()]
+
+    # Сохраняем текущий текст, позицию курсора и выделенный текст
+    current_text = customer_combobox.get()
+    cursor_position = customer_combobox.index(tk.INSERT)
+    selection_range = customer_combobox.selection_present()
+
+    # Обновляем список значений в combobox
+    customer_combobox['values'] = filtered_customers
+
+    # Восстанавливаем текст, позицию курсора и выделение
+    customer_combobox.set(current_text)
+    customer_combobox.icursor(cursor_position)
+    if selection_range:
+        customer_combobox.selection_range(0, tk.END)
+
+    # Если что-то введено, автоматически открываем выпадающий список
+    if search_term:
+        customer_combobox.event_generate('<Down>')  # Открывает выпадающий список
+
+
 # Функция для генерации договора
 def generate_contract():
     try:
-        # Получаем данные из полей ввода
         customer_id = entry_customer_id.get().strip()
         if not customer_id:
             messagebox.showerror("Ошибка", "Введите ID клиента")
@@ -40,7 +65,6 @@ def generate_contract():
         else:
             payment = None
 
-        # Получаем все остальные данные
         contract_number = entry_contract_number.get().strip()
         location = entry_location.get().strip()
         doc_date = entry_doc_date.get().strip()
@@ -52,7 +76,6 @@ def generate_contract():
             messagebox.showerror("Ошибка", "Введите корректную стоимость работ")
             return
 
-        # Генерация документа
         generate_docx(customer, list(work_list), payment, completions[0], contract_number, location, doc_date,
                       total_cost)
         messagebox.showinfo("Успех", f"Документ сохранен в папке docs_out под именем contract_{contract_number}.docx")
@@ -62,38 +85,49 @@ def generate_contract():
     except Exception as e:
         messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
 
+
 def update_customer_id(event):
     selected_customer = customer_combobox.get()
     if selected_customer:
-        customer_id = selected_customer.split(" - ")[0]  # Извлечение ID из строки вида "ID - Name"
+        customer_id = selected_customer.split(" - ")[0]
         entry_customer_id.delete(0, tk.END)
         entry_customer_id.insert(0, customer_id)
+
 
 def update_payment_terms(event):
     if payment_condition_var.get() == "предоплата":
         payment_term_combobox.config(state="normal")
-        # Загрузить проценты предоплаты
+        # Получаем все условия оплаты
         payment_terms = fetch_all_payment_terms()
-        payment_term_combobox['values'] = [str(row[0]) for row in payment_terms]
+        # Фильтруем условия, исключая те, у которых процент равен 0%
+
+        filtered_payment_terms = [str(row[0]) for row in payment_terms if row[1] > 0]  # Предполагается, что row[1] это процент предоплаты
+
+
+        payment_term_combobox['values'] = filtered_payment_terms
     else:
         payment_term_combobox.config(state="disabled")
         payment_term_combobox.set('')
+
 
 # Инициализация главного окна
 root = tk.Tk()
 root.title("Генератор договоров")
 
-# Поле для выбора клиента
-tk.Label(root, text="Выберите клиента:").grid(row=0, column=0, sticky="w", padx=10, pady=5)
-customer_combobox = ttk.Combobox(root, width=50, state="readonly")
+# Поле для выбора/поиска клиента
+tk.Label(root, text="Выберите или введите клиента:").grid(row=0, column=0, sticky="w", padx=10, pady=5)
+customer_combobox = ttk.Combobox(root, width=50, state="normal")
 customer_combobox.grid(row=0, column=1, padx=10, pady=5)
 
 # Заполнение выпадающего списка клиентами
 customers = fetch_all_customers()
-customer_combobox['values'] = [f"{customer[0]} - {customer[1]}" for customer in customers]
-customer_combobox.bind("<<ComboboxSelected>>", update_customer_id)
+customer_combobox['values'] = [f"{customer[0]} - {customer[2]}" for customer in customers]
 
-# Поле для ввода ID клиента (автоматически заполняется при выборе клиента из списка)
+# Привязка событий к combobox
+customer_combobox.bind("<<ComboboxSelected>>", update_customer_id)  # Обновляет ID при выборе клиента
+customer_combobox.bind('<KeyRelease>', filter_customers)  # Фильтрует клиентов при вводе текста
+
+# Поле для ввода ID клиента
 tk.Label(root, text="Введите ID клиента:").grid(row=1, column=0, sticky="w", padx=10, pady=5)
 entry_customer_id = tk.Entry(root, width=50)
 entry_customer_id.grid(row=1, column=1, padx=10, pady=5)
@@ -104,17 +138,13 @@ payment_condition_var = tk.StringVar()
 payment_condition_combobox = ttk.Combobox(root, textvariable=payment_condition_var, values=["предоплата", "постоплата"],
                                           state="readonly")
 payment_condition_combobox.grid(row=2, column=1, padx=10, pady=5)
+payment_condition_combobox.bind("<<ComboboxSelected>>", update_payment_terms)
 
 # Поле для выбора процента предоплаты
 tk.Label(root, text="Выберите процент предоплаты:").grid(row=3, column=0, sticky="w", padx=10, pady=5)
 payment_term_var = tk.StringVar()
 payment_term_combobox = ttk.Combobox(root, textvariable=payment_term_var, state="disabled")
-
-
-
 payment_term_combobox.grid(row=3, column=1, padx=10, pady=5)
-
-payment_condition_combobox.bind("<<ComboboxSelected>>", update_payment_terms)
 
 # Поле для ввода номера договора
 tk.Label(root, text="Введите номер договора:").grid(row=4, column=0, sticky="w", padx=10, pady=5)
@@ -140,11 +170,13 @@ entry_work.grid(row=7, column=1, padx=10, pady=5)
 work_listbox = tk.Listbox(root, width=50, height=5)
 work_listbox.grid(row=8, column=1, padx=10, pady=5)
 
+
 def add_work():
     work = entry_work.get()
     if work:
         work_listbox.insert(tk.END, work)
         entry_work.delete(0, tk.END)
+
 
 add_work_button = tk.Button(root, text="Добавить работу", command=add_work)
 add_work_button.grid(row=7, column=2, padx=10, pady=5)
