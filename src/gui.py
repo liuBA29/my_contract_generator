@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from src.database import (fetch_all_customers, fetch_customer_data, fetch_completion_of_work_by_condition,
                           fetch_all_payment_terms, fetch_payment_terms_by_id)
-from src.document_generator import generate_docx
+from src.document_generator import generate_docx, generate_docx_act
 from tkinter import Button
 
 
@@ -32,6 +32,69 @@ def filter_customers(event):
         customer_combobox.event_generate('<Down>')  # Открывает выпадающий список
 
 # Функция для генерации акта
+
+def generate_act():
+    actroot = tk.Toplevel()  # Используем Toplevel вместо Tk
+    actroot.title("Генератор актов")
+
+    # Поле для ввода даты
+    tk.Label(actroot, text="Введите дату окончания работ (дд.мм.гггг):").grid(row=0, column=0, sticky="w", padx=10, pady=5)
+    entry_act_date = tk.Entry(actroot, width=50)
+    entry_act_date.grid(row=0, column=1, padx=10, pady=5)
+
+    # Функция-обработчик для кнопки "Принять"
+    def on_accept():
+        act_date = entry_act_date.get().strip()
+        if not act_date:
+            messagebox.showerror("Ошибка", "Введите дату окончания работ")
+            return
+
+        # Получение данных из основного окна
+        customer_id = entry_customer_id.get().strip()
+        if not customer_id:
+            messagebox.showerror("Ошибка", "Введите ID клиента в основном окне")
+            return
+
+        customer_id = int(customer_id)
+        customer = fetch_customer_data(customer_id)
+        if not customer:
+            messagebox.showerror("Ошибка", "Клиент не найден")
+            return
+
+        contract_number = entry_contract_number.get().strip()
+        if not contract_number:
+            messagebox.showerror("Ошибка", "Введите номер договора в основном окне")
+            return
+
+        doc_date = entry_doc_date.get().strip()
+        if not doc_date:
+            messagebox.showerror("Ошибка", "Введите дату договора в основном окне")
+            return
+
+        work_list = work_listbox.get(0, tk.END)
+        if not work_list:
+            messagebox.showerror("Ошибка", "Введите работы в основном окне")
+            return
+
+        try:
+            total_cost = float(entry_total_cost.get().strip())
+        except ValueError:
+            messagebox.showerror("Ошибка", "Введите корректную стоимость работ в основном окне")
+            return
+
+        # Вызов функции для генерации акта
+        try:
+            generate_docx_act(customer, list(work_list), contract_number, doc_date, act_date, total_cost)
+            messagebox.showinfo("Успех", f"Акт сохранен в папке docs_out под именем act_{contract_number}.docx")
+            actroot.destroy()  # Закрываем окно после успешного выполнения
+        except Exception as e:
+            messagebox.showerror("Ошибка", f"Произошла ошибка при генерации акта: {e}")
+
+    generate_button = tk.Button(actroot, text="Принять", command=on_accept)
+    generate_button.grid(row=1, column=1, padx=10, pady=10)
+
+    actroot.mainloop()
+
 
 
 
@@ -196,8 +259,12 @@ generate_button.grid(row=10, column=1, padx=10, pady=10)
 
 
 # Кнопка для генерации договора
-generate_button = tk.Button(root, text="Сгенерировать акт", command=generate_contract)
+generate_button = tk.Button(root, text="Сгенерировать акт", command=generate_act)
 generate_button.grid(row=11, column=1, padx=10, pady=10)
+
+
+
+
 
 # Запуск главного окна
 root.mainloop()

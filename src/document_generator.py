@@ -4,6 +4,193 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from num2words import num2words
 import os
 
+
+def generate_docx_act(customer, work_list, contract_number, doc_date, act_date,  total_cost):
+    doc = Document()
+
+    # Apply styles and margins
+    style = doc.styles['Normal']
+    font = style.font
+    font.name = 'Courier New'
+    font.size = Pt(10)
+    for section in doc.sections:
+        section.left_margin = Inches(0.7)
+        section.right_margin = Inches(0.5)
+
+    # Header
+    p = doc.add_paragraph(f'Приложение 2 к ДОГОВОРУ № {contract_number}  (от {doc_date} года) ', style='Normal')
+    p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    run = p.runs[0]
+    run.font.size = Pt(12)
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
+
+    p = doc.add_paragraph(f'Акт сдачи-приемки работ', style='Normal')
+    p.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+    run = p.runs[0]
+    run.font.size = Pt(12)
+    run.font.bold = True
+
+    # Date
+    table = doc.add_table(rows=1, cols=2)
+    cell1 = table.cell(0, 0)
+    cell1.text = 'г. Минск'
+    cell1.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    cell1.paragraphs[0].runs[0].font.size = Pt(11)
+
+    cell2 = table.cell(0, 1)
+    cell2.text = act_date
+    cell2.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.RIGHT
+    cell2.paragraphs[0].runs[0].font.size = Pt(11)
+
+    # Main text
+    p = doc.add_paragraph()
+    p.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+    p.add_run(
+        f"1. {customer[1]}, в лице {customer[9]} {customer[2]}, действующего на основании {customer[3]}, именуемое в дальнейшем ЗАКАЗЧИК, "
+        f"с одной стороны, и индивидуальный предприниматель Панченко Константин Александрович, действующий в качестве индивидуального "
+        f"предпринимателя на основании регистрационного свидетельства 0157617, выданного МГИК «04» декабря 2008г., именуемый в дальнейшем "
+        f"ИСПОЛНИТЕЛЬ, с другой стороны, составили настоящий Акт о том, что выполненные Исполнителем работы:"
+    ).font.size = Pt(11)
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
+
+    # Section 1
+    p = doc.add_paragraph('Работы: ',
+                          style='Normal')
+
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
+
+    for idx, work in enumerate(work_list, 1):
+        p = doc.add_paragraph(f"1.{idx}. {work}.", style='Normal')
+        p.paragraph_format.space_before = Pt(0)
+        p.paragraph_format.space_after = Pt(0)
+    p=doc.add_paragraph(f'удовлетворяют условиям Договора № {contract_number} от {doc_date} г.')
+
+    # Section 2
+    rubles, kopecks = divmod(total_cost, 1)
+    rubles = int(rubles)
+    kopecks = round(kopecks * 100)  # Округление до целых копеек
+    sum_in_words = num2words(rubles, lang='ru', to='cardinal')
+
+    p = doc.add_paragraph(
+        f'2. Договорная цена выполненных работ составляет {total_cost:.2f} '
+        f'({sum_in_words.capitalize()} белорусских рублей 00 коп.). Без НДС.',
+        style='Normal'
+    )
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
+
+    # Section 3
+
+    p = doc.add_paragraph(
+            f'3. Исполнитель выполнил свои обязательства в полном объеме.',
+            style='Normal'
+        )
+
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
+
+    # Section 4
+
+    p = doc.add_paragraph(f'4. Заказчик выполненные работы принял, претензий не имеет.', style='Normal')
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
+
+    # Section 5
+    p = doc.add_paragraph(
+        '5. Настоящий Акт составлен в 2(двух) экземплярах, один из которых находится у Исполнителя,'
+        ' второй - у Заказчика.',
+        style='Normal'
+    )
+    p.paragraph_format.space_before = Pt(0)
+    p.paragraph_format.space_after = Pt(0)
+
+
+    # Party details in a table
+    recv = doc.add_paragraph('Реквизиты сторон:', style='Normal')
+    recv.alignment = WD_PARAGRAPH_ALIGNMENT.CENTER
+
+    recv.runs[0].font.bold = True
+    recv.paragraph_format.space_before = Pt(0)
+    recv.paragraph_format.space_after = Pt(0)
+
+    table = doc.add_table(rows=1, cols=2)
+    table.columns[0].width = Pt(200)
+    table.columns[1].width = Pt(200)
+
+    # Fill in table
+    row_cells = table.rows[0].cells
+    # Set text and font size for the first cell (Исполнитель)
+    p_ispolnitel = row_cells[0].paragraphs[0]
+
+    # Создаем жирный Run для "ИП Панченко К.А."
+    run_ispolnitel_bold = p_ispolnitel.add_run('ИП Панченко К.А.\n')
+    run_ispolnitel_bold.font.size = Pt(9)
+    run_ispolnitel_bold.bold = True
+
+    # Добавляем остальной текст (обычным шрифтом)
+    run_ispolnitel = p_ispolnitel.add_run(
+        '220007 г.Минск, ул.Жуковского 9/2-6\n'
+        'IBAN: BY47MTBK30130001093300064929\n'
+        'ЗАО «МТБанк», BIC MTBKBY22,\n'
+        'г.Минск, ул.Толстого, 10\n'
+        'УНП 191085820'
+    )
+    run_ispolnitel.font.size = Pt(9)
+
+    # Set text and font size for the second cell (Заказчик)
+    p_zakazchik = row_cells[1].paragraphs[0]
+
+    # Создаем жирный Run для названия заказчика
+    run_zakazchik_bold = p_zakazchik.add_run(f'{customer[10]}\n')
+    run_zakazchik_bold.font.size = Pt(9)
+    run_zakazchik_bold.bold = True
+
+    # Добавляем остальной текст (обычным шрифтом)
+    run_zakazchik = p_zakazchik.add_run(
+        f'{customer[5]}\n'
+        f'IBAN: {customer[8]}\n'
+        f'УНП: {customer[6]}, ОКПО: {customer[7]}\n'
+
+    )
+    run_zakazchik.font.size = Pt(9)
+
+    # Set column widths
+    table.columns[0].width = Pt(150)  # Example width for the first column
+    table.columns[1].width = Pt(350)  # Example width for the second column
+
+    # Signatures
+    table = doc.add_table(rows=1, cols=2)
+    table.autofit = False
+
+    # Set column widths
+    table.columns[0].width = Pt(150)  # Example width for the first column
+    table.columns[1].width = Pt(450)  # Example width for the second column
+
+    cell1 = table.cell(0, 0)
+    cell1.text = 'Исполнитель_________(К.А. Панченко)'
+    cell1.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    cell1.paragraphs[0].runs[0].font.size = Pt(9)
+
+    cell2 = table.cell(0, 1)
+    cell2.text = f'Заказчик_________({customer[4]})'
+    cell2.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
+    cell2.paragraphs[0].runs[0].font.size = Pt(9)
+
+    p = doc.add_paragraph()
+    p = doc.add_paragraph()
+
+
+    # Create output directory if it does not exist
+    os.makedirs('../docs_out', exist_ok=True)
+
+    file_name = f'../docs_out/act_{contract_number}.docx'
+    doc.save(file_name)
+    print(f'Акт выполненных работ сохранен как {file_name}')
+
+
 def generate_docx(customer, work_list, payment_term, completion, contract_number, location,
                   doc_date, total_cost):
     doc = Document()
