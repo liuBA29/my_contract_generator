@@ -4,6 +4,7 @@ from tkinter import messagebox
 from src.database import (fetch_all_customers, fetch_customer_data, fetch_completion_of_work_by_condition,
                           fetch_all_payment_terms, fetch_payment_terms_by_id)
 from src.document_generator import generate_docx
+from tkinter import Button
 
 
 # Функция для фильтрации клиентов по введённому тексту
@@ -29,6 +30,9 @@ def filter_customers(event):
     # Если что-то введено, автоматически открываем выпадающий список
     if search_term:
         customer_combobox.event_generate('<Down>')  # Открывает выпадающий список
+
+# Функция для генерации акта
+
 
 
 # Функция для генерации договора
@@ -188,7 +192,12 @@ entry_total_cost.grid(row=9, column=1, padx=10, pady=5)
 
 # Кнопка для генерации договора
 generate_button = tk.Button(root, text="Сгенерировать договор", command=generate_contract)
-generate_button.grid(row=10, column=1, padx=10, pady=20)
+generate_button.grid(row=10, column=1, padx=10, pady=10)
+
+
+# Кнопка для генерации договора
+generate_button = tk.Button(root, text="Сгенерировать акт", command=generate_contract)
+generate_button.grid(row=11, column=1, padx=10, pady=10)
 
 # Запуск главного окна
 root.mainloop()
