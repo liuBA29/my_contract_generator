@@ -63,47 +63,48 @@ def clear_entries():
 # Создаем главное окно
 root = tk.Tk()
 root.title("Добавление клиентов")
+root.geometry('660x250')
 
 # Метки и поля ввода
 tk.Label(root, text="Название организации").grid(row=0, column=0)
-entry_organization_name = tk.Entry(root)
+entry_organization_name = tk.Entry(root, width=70)
 entry_organization_name.grid(row=0, column=1)
 
 tk.Label(root, text="ФИО руководителя").grid(row=1, column=0)
-entry_ruler_name = tk.Entry(root)
+entry_ruler_name = tk.Entry(root, width=70)
 entry_ruler_name.grid(row=1, column=1)
 
 tk.Label(root, text="На основании").grid(row=2, column=0)
-entry_na_osnovanii = tk.Entry(root)
+entry_na_osnovanii = tk.Entry(root, width=70)
 entry_na_osnovanii.grid(row=2, column=1)
 
 tk.Label(root, text="ИО Фамилия главы организации").grid(row=3, column=0)
-entry_fio_rukovoditelya = tk.Entry(root)
+entry_fio_rukovoditelya = tk.Entry(root, width=70)
 entry_fio_rukovoditelya.grid(row=3, column=1)
 
 tk.Label(root, text="Адрес").grid(row=4, column=0)
-entry_address = tk.Entry(root)
+entry_address = tk.Entry(root, width=70)
 entry_address.grid(row=4, column=1)
 
 tk.Label(root, text="УНП").grid(row=5, column=0)
-entry_unp = tk.Entry(root)
+entry_unp = tk.Entry(root, width=70)
 entry_unp.grid(row=5, column=1)
 
 tk.Label(root, text="ОКПО").grid(row=6, column=0)
-entry_okpo = tk.Entry(root)
+entry_okpo = tk.Entry(root, width=70)
 entry_okpo.grid(row=6, column=1)
 
 tk.Label(root, text="Р/счет, банк, S.W.I.F.T., адрес банка").grid(row=7, column=0)
-entry_rs = tk.Entry(root)
+entry_rs = tk.Entry(root, width=70)
 entry_rs.grid(row=7, column=1)
 
 tk.Label(root, text="Должность").grid(row=8, column=0)
-entry_dolhnost = tk.Entry(root)
+entry_dolhnost = tk.Entry(root, width=70)
 entry_dolhnost.grid(row=8, column=1)
 
 
 tk.Label(root, text="Сокращенное название организации").grid(row=9, column=0)
-entry_short_title = tk.Entry(root)
+entry_short_title = tk.Entry(root, width=70)
 entry_short_title.grid(row=9, column=1)
 
 # Кнопка для добавления клиента
