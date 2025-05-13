@@ -1,210 +1,135 @@
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import messagebox
 import sqlite3
 
-# Подключаемся к базе данных
-conn = sqlite3.connect('../data/customers.db')
-cursor = conn.cursor()
+def main():
+    # Подключаемся к базе данных (если базы нет, то она будет создана)
+    conn = sqlite3.connect('../data/customers.db')
+    cursor = conn.cursor()
 
-# Функция для обновления данных клиента
-def update_customer():
-    selected_item = tree.focus()
-    if not selected_item:
-        messagebox.showwarning("Ошибка", "Пожалуйста, выберите клиента для редактирования.")
-        return
+    # Создаем таблицу, если ее нет
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS customers (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            organization_name TEXT,
+            ruler_name TEXT,
+            na_osnovanii TEXT,
+            fio_rukovoditelya TEXT,
+            address TEXT,
+            unp TEXT,
+            okpo TEXT,
+            rs TEXT,
+            dolhnost TEXT,
+            short_title TEXT
+        )
+    ''')
+    conn.commit()
 
-    customer_id = tree.item(selected_item)['values'][0]
-    organization_name = entry_organization_name.get()
-    ruler_name = entry_ruler_name.get()
-    na_osnovanii = entry_na_osnovanii.get()
-    fio_rukovoditelya = entry_fio_rukovoditelya.get()
-    address = entry_address.get()
-    unp = entry_unp.get()
-    okpo = entry_okpo.get()
-    rs = entry_rs.get()
-    dolhnost = entry_dolhnost.get()
-    short_title = entry_short_title.get()
+    # Функция для добавления клиента в базу данных
+    def add_customer():
+        organization_name = entry_organization_name.get()
+        ruler_name = entry_ruler_name.get()
+        na_osnovanii = entry_na_osnovanii.get()
+        fio_rukovoditelya = entry_fio_rukovoditelya.get()
+        address = entry_address.get()
+        unp = entry_unp.get()
+        okpo = entry_okpo.get()
+        rs = entry_rs.get()
+        dolhnost = entry_dolhnost.get()
+        short_title = entry_short_title.get()
 
-    if all([organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost, short_title]):
-        cursor.execute('''
-            UPDATE customers 
-            SET organization_name=?, ruler_name=?, na_osnovanii=?, fio_rukovoditelya=?, address=?, unp=?, okpo=?, rs=?, dolhnost=?, short_title=?
-            WHERE id=?
-        ''', (organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost, short_title, customer_id))
-        conn.commit()
-        messagebox.showinfo("Успех", "Данные клиента успешно обновлены!")
-        load_customers()
-        clear_entries()
-    else:
-        messagebox.showwarning("Ошибка", "Пожалуйста, заполните все поля.")
+        if all([organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost, short_title]):
+            # Проверка на дубликаты без учета регистра
+            cursor.execute('''
+                SELECT * FROM customers 
+                WHERE LOWER(organization_name) = LOWER(?) 
+                OR LOWER(short_title) = LOWER(?)
+            ''', (organization_name, short_title))
+            existing_customer = cursor.fetchone()
 
-# Функция для удаления клиента
-def delete_customer():
-    selected_item = tree.focus()
-    if not selected_item:
-        messagebox.showwarning("Ошибка", "Пожалуйста, выберите клиента для удаления.")
-        return
+            if existing_customer:
+                # Если клиент с таким именем или сокращенным названием уже есть
+                response = messagebox.askyesno("Дубликат", "Клиент с таким названием или сокращенным названием уже существует. Добавить дубликат?")
+                if not response:
+                    return
 
-    customer_id = tree.item(selected_item)['values'][0]
-    response = messagebox.askyesno("Подтверждение", "Вы уверены, что хотите удалить этого клиента?")
-    if response:
-        cursor.execute("DELETE FROM customers WHERE id=?", (customer_id,))
-        conn.commit()
-        messagebox.showinfo("Успех", "Клиент успешно удален!")
-        load_customers()
-        clear_entries()
+            # Добавление клиента в базу данных, если дубликат не был найден или пользователь согласился на добавление
+            cursor.execute('''
+                INSERT INTO customers (organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost, short_title)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            ''', (organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost, short_title))
+            conn.commit()
+            messagebox.showinfo("Успех", "Клиент успешно добавлен!")
+            clear_entries()
+        else:
+            messagebox.showwarning("Ошибка", "Пожалуйста, заполните все поля.")
 
-# Функция для загрузки клиентов в таблицу
-def load_customers():
-    for row in tree.get_children():
-        tree.delete(row)
-    cursor.execute("SELECT * FROM customers")
-    for row in cursor.fetchall():
-        tree.insert("", "end", values=row)
+    def clear_entries():
+        entry_organization_name.delete(0, tk.END)
+        entry_ruler_name.delete(0, tk.END)
+        entry_na_osnovanii.delete(0, tk.END)
+        entry_fio_rukovoditelya.delete(0, tk.END)
+        entry_address.delete(0, tk.END)
+        entry_unp.delete(0, tk.END)
+        entry_okpo.delete(0, tk.END)
+        entry_rs.delete(0, tk.END)
+        entry_dolhnost.delete(0, tk.END)
+        entry_short_title.delete(0, tk.END)
 
-# Функция для загрузки данных выбранного клиента в поля ввода
-def load_customer_data(event):
-    selected_item = tree.focus()
-    if not selected_item:
-        return
+    # Создаем главное окно
+    root = tk.Tk()
+    root.title("Добавление клиентов")
+    root.geometry('660x250')
 
-    customer_data = tree.item(selected_item)['values']
+    # Метки и поля ввода
+    tk.Label(root, text="Название организации").grid(row=0, column=0)
+    entry_organization_name = tk.Entry(root, width=70)
+    entry_organization_name.grid(row=0, column=1)
 
-    entry_organization_name.delete(0, tk.END)
-    entry_organization_name.insert(0, customer_data[1])
+    tk.Label(root, text="ФИО руководителя").grid(row=1, column=0)
+    entry_ruler_name = tk.Entry(root, width=70)
+    entry_ruler_name.grid(row=1, column=1)
 
-    entry_ruler_name.delete(0, tk.END)
-    entry_ruler_name.insert(0, customer_data[2])
+    tk.Label(root, text="На основании").grid(row=2, column=0)
+    entry_na_osnovanii = tk.Entry(root, width=70)
+    entry_na_osnovanii.grid(row=2, column=1)
 
-    entry_na_osnovanii.delete(0, tk.END)
-    entry_na_osnovanii.insert(0, customer_data[3])
+    tk.Label(root, text="ИО Фамилия главы организации").grid(row=3, column=0)
+    entry_fio_rukovoditelya = tk.Entry(root, width=70)
+    entry_fio_rukovoditelya.grid(row=3, column=1)
 
-    entry_fio_rukovoditelya.delete(0, tk.END)
-    entry_fio_rukovoditelya.insert(0, customer_data[4])
+    tk.Label(root, text="Адрес").grid(row=4, column=0)
+    entry_address = tk.Entry(root, width=70)
+    entry_address.grid(row=4, column=1)
 
-    entry_address.delete(0, tk.END)
-    entry_address.insert(0, customer_data[5])
+    tk.Label(root, text="УНП").grid(row=5, column=0)
+    entry_unp = tk.Entry(root, width=70)
+    entry_unp.grid(row=5, column=1)
 
-    entry_unp.delete(0, tk.END)
-    entry_unp.insert(0, customer_data[6])
+    tk.Label(root, text="ОКПО").grid(row=6, column=0)
+    entry_okpo = tk.Entry(root, width=70)
+    entry_okpo.grid(row=6, column=1)
 
-    entry_okpo.delete(0, tk.END)
-    entry_okpo.insert(0, customer_data[7])
+    tk.Label(root, text="Р/счет, банк, S.W.I.F.T., адрес банка").grid(row=7, column=0)
+    entry_rs = tk.Entry(root, width=70)
+    entry_rs.grid(row=7, column=1)
 
-    entry_rs.delete(0, tk.END)
-    entry_rs.insert(0, customer_data[8])
+    tk.Label(root, text="Должность").grid(row=8, column=0)
+    entry_dolhnost = tk.Entry(root, width=70)
+    entry_dolhnost.grid(row=8, column=1)
 
-    entry_dolhnost.delete(0, tk.END)
-    entry_dolhnost.insert(0, customer_data[9])
+    tk.Label(root, text="Сокращенное название организации").grid(row=9, column=0)
+    entry_short_title = tk.Entry(root, width=70)
+    entry_short_title.grid(row=9, column=1)
 
-    entry_short_title.delete(0, tk.END)
-    entry_short_title.insert(0, customer_data[10])
+    # Кнопка для добавления клиента
+    tk.Button(root, text="Добавить клиента", command=add_customer).grid(row=10, column=0, columnspan=2)
 
-# Функция для очистки полей ввода
-def clear_entries():
-    entry_organization_name.delete(0, tk.END)
-    entry_ruler_name.delete(0, tk.END)
-    entry_na_osnovanii.delete(0, tk.END)
-    entry_fio_rukovoditelya.delete(0, tk.END)
-    entry_address.delete(0, tk.END)
-    entry_unp.delete(0, tk.END)
-    entry_okpo.delete(0, tk.END)
-    entry_rs.delete(0, tk.END)
-    entry_dolhnost.delete(0, tk.END)
-    entry_short_title.delete(0, tk.END)
+    # Запуск основного цикла приложения
+    root.mainloop()
 
-# Создаем главное окно
-root = tk.Tk()
-root.title("Редактирование клиентов")
-root.geometry("1200x600")
+    # Закрытие соединения с базой данных при закрытии приложения
+    conn.close()
 
-# Таблица для отображения клиентов
-tree = ttk.Treeview(root, columns=('ID', 'Название организации', 'ФИО главы', 'На основании', 'ИО Фамилия руководителя', 'Адрес', 'УНП', 'ОКПО', 'Р/счет и реки банка', 'Должность', 'Сокращенное название'), show='headings')
-tree.heading('ID', text='ID')
-tree.heading('Название организации', text='Название организации')
-tree.heading('ФИО главы', text='ФИО главы')
-tree.heading('На основании', text='На основании')
-tree.heading('ИО Фамилия руководителя', text='ИО Фамилия руководителя')
-tree.heading('Адрес', text='Адрес')
-tree.heading('УНП', text='УНП')
-tree.heading('ОКПО', text='ОКПО')
-tree.heading('Р/счет и реки банка', text='Р/счет и реки банка')
-tree.heading('Должность', text='Должность')
-tree.heading('Сокращенное название', text='Сокращенное название')
-tree.column('ID', width=30)
-
-# Создаем вертикальную полосу прокрутки
-vsb = ttk.Scrollbar(root, orient="vertical", command=tree.yview)
-tree.configure(yscrollcommand=vsb.set)
-vsb.grid(row=0, column=2, sticky='ns')
-
-# Создаем горизонтальную полосу прокрутки
-hsb = ttk.Scrollbar(root, orient="horizontal", command=tree.xview)
-tree.configure(xscrollcommand=hsb.set)
-hsb.grid(row=1, column=0, columnspan=2, sticky='ew')
-
-# Размещаем таблицу с привязкой к полосам прокрутки
-tree.grid(row=0, column=0, columnspan=2, sticky='nsew')
-
-# Загрузка данных клиента при выборе строки
-tree.bind('<<TreeviewSelect>>', load_customer_data)
-
-# Метки и поля ввода для редактирования данных клиента
-tk.Label(root, text="Название организации").grid(row=2, column=0, sticky='e')
-entry_organization_name = tk.Entry(root)
-entry_organization_name.grid(row=2, column=1, sticky='ew')
-
-tk.Label(root, text="ФИО главы организации").grid(row=3, column=0, sticky='e')
-entry_ruler_name = tk.Entry(root)
-entry_ruler_name.grid(row=3, column=1, sticky='ew')
-
-tk.Label(root, text="На основании").grid(row=4, column=0, sticky='e')
-entry_na_osnovanii = tk.Entry(root)
-entry_na_osnovanii.grid(row=4, column=1, sticky='ew')
-
-tk.Label(root, text="ИО Фамилия руководителя").grid(row=5, column=0, sticky='e')
-entry_fio_rukovoditelya = tk.Entry(root)
-entry_fio_rukovoditelya.grid(row=5, column=1, sticky='ew')
-
-tk.Label(root, text="Адрес").grid(row=6, column=0, sticky='e')
-entry_address = tk.Entry(root)
-entry_address.grid(row=6, column=1, sticky='ew')
-
-tk.Label(root, text="УНП").grid(row=7, column=0, sticky='e')
-entry_unp = tk.Entry(root)
-entry_unp.grid(row=7, column=1, sticky='ew')
-
-tk.Label(root, text="ОКПО").grid(row=8, column=0, sticky='e')
-entry_okpo = tk.Entry(root)
-entry_okpo.grid(row=8, column=1, sticky='ew')
-
-tk.Label(root, text="Р/счет, SWIFT, адрес банка").grid(row=9, column=0, sticky='e')
-entry_rs = tk.Entry(root)
-entry_rs.grid(row=9, column=1, sticky='ew')
-
-tk.Label(root, text="Должность").grid(row=10, column=0, sticky='e')
-entry_dolhnost = tk.Entry(root)
-entry_dolhnost.grid(row=10, column=1, sticky='ew')
-
-tk.Label(root, text="Сокращенное название организации").grid(row=11, column=0, sticky='e')
-entry_short_title = tk.Entry(root)
-entry_short_title.grid(row=11, column=1, sticky='ew')
-
-# Кнопка для сохранения изменений
-tk.Button(root, text="Сохранить изменения", command=update_customer).grid(row=12, column=0, columnspan=2)
-
-# Кнопка для удаления клиента
-tk.Button(root, text="Удалить клиента", command=delete_customer).grid(row=13, column=0, columnspan=2)
-
-# Настройка расширения для колонок и строк
-root.grid_columnconfigure(1, weight=1)
-root.grid_rowconfigure(0, weight=1)
-
-# Загрузка клиентов в таблицу при старте программы
-load_customers()
-
-# Запуск основного цикла приложения
-root.mainloop()
-
-# Закрытие соединения с базой данных при закрытии приложения
-conn.close()
+if __name__ == '__main__':
+    main()

@@ -5,7 +5,7 @@ from src.database import (fetch_all_customers, fetch_customer_data, fetch_comple
                           fetch_all_payment_terms, fetch_payment_terms_by_id)
 from src.document_generator import generate_docx, generate_docx_act
 from tkinter import Button
-
+import add_customer_gui
 
 # Функция для фильтрации клиентов по введённому тексту
 def filter_customers(event):
@@ -95,6 +95,9 @@ def generate_act():
 
     actroot.mainloop()
 
+
+def add_customer():
+    add_customer_gui.main()
 
 
 
@@ -186,6 +189,12 @@ tk.Label(root, text="Выберите или введите клиента:").gr
 customer_combobox = ttk.Combobox(root, width=50, state="normal")
 customer_combobox.grid(row=0, column=1, padx=10, pady=5)
 
+
+add_customer_button = tk.Button(root, text="Добавить клиента", command=add_customer)
+add_customer_button.grid(row=0, column=2, padx=10, pady=5)
+
+
+
 # Заполнение выпадающего списка клиентами
 customers = fetch_all_customers()
 customer_combobox['values'] = [f"{customer[0]} - {customer[2]}" for customer in customers]
@@ -236,6 +245,9 @@ entry_work.grid(row=7, column=1, padx=10, pady=5)
 # Список для отображения введенных работ
 work_listbox = tk.Listbox(root, width=50, height=5)
 work_listbox.grid(row=8, column=1, padx=10, pady=5)
+
+
+
 
 
 def add_work():
