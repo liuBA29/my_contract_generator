@@ -1,6 +1,9 @@
+# src/main.py
+
+
 import os
 import sqlite3
-from src.database import fetch_customer_data, fetch_completion_of_work_by_condition, fetch_all_payment_terms, fetch_payment_terms_by_id
+from src.database import *
 from src.document_generator import generate_docx
 from src.user_input import get_user_input
 
@@ -16,8 +19,9 @@ def main():
     DB_PATH = os.path.abspath(os.path.join(os.getcwd(), '../data/customers.db'))
     print(f"Проверка базы данных по пути: {DB_PATH}")
 
+
     try:
-        conn = sqlite3.connect(DB_PATH)
+        conn = get_db_connection()
         cursor = conn.cursor()
 
         # Вывод списка заказчиков
