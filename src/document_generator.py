@@ -1,8 +1,12 @@
+# src/document_generator.py
+
 from docx import Document
 from docx.shared import Pt, Inches
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from num2words import num2words
 import os
+from tkinter import filedialog
+
 
 
 def generate_docx_act(customer, work_list, contract_number, doc_date, act_date,  total_cost):
@@ -189,6 +193,11 @@ def generate_docx_act(customer, work_list, contract_number, doc_date, act_date, 
     file_name = f'../docs_out/act_{contract_number}.docx'
     doc.save(file_name)
     print(f'Акт выполненных работ сохранен как {file_name}')
+
+
+
+
+
 
 
 def generate_docx(customer, work_list, payment_term, completion, contract_number, location,
@@ -476,9 +485,26 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     cell2.paragraphs[0].runs[0].font.size = Pt(9)
 
     # Create output directory if it does not exist
-    os.makedirs('../docs_out', exist_ok=True)
+    #os.makedirs('../docs_out', exist_ok=True)
 
     # Save document with contract number
-    file_name = f'../docs_out/contract_{contract_number}.docx'
-    doc.save(file_name)
-    print(f'Документ сохранен как {file_name}')
+    #file_name = os.path.abspath(os.path.join(os.path.dirname(__file__), f'../docs_out/contract_{contract_number}.docx'))
+    file_path = filedialog.asksaveasfilename(
+        defaultextension=f".docx",
+        filetypes=[("Word files", "*.docx")],
+        initialfile=f'contract_{contract_number}.docx'
+    )
+
+    #file_name = f'../docs_out/contract_{contract_number}.docx'
+    if file_path:
+        # Сохраняем документ
+        doc.save(file_path)
+
+        # Получаем папку, в которую пользователь сохранил файл
+        saved_folder = os.path.dirname(file_path)
+        print("Папка, выбранная пользователем:", saved_folder)
+
+        return file_path  # или return saved_folder, если тебе именно папка нужна
+    else:
+        return None
+

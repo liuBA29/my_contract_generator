@@ -1,4 +1,4 @@
-# act_generator.py
+# src/act_generator.py
 from src.document_generator import generate_docx
 
 def generate_completion_act(customer, contract_number, location, doc_date, work_list, total_cost):

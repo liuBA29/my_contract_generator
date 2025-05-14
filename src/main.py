@@ -4,8 +4,9 @@
 import os
 import sqlite3
 from src.database import *
-from src.document_generator import generate_docx
+from src.document_generator import *
 from src.user_input import get_user_input
+from tkinter import filedialog, messagebox
 
 def display_options(title, options):
     print(title)
@@ -59,7 +60,11 @@ def main():
 
         # Генерация документа
         generate_docx(customer, work_list, payment, completions[0], contract_number, location, doc_date, total_cost)
-        print(f"Документ сохранен в папке docs_out под именем doc_{contract_number}.docx")
+
+        # if generate_docx.file_path:
+        #     print(f"Документ сохранен в папке {generate_docx.file_path} под именем doc_{contract_number}.docx")
+        # else:
+        #     print("Документ не был сохранен.")
 
     except ValueError:
         print("Неверный ввод. Пожалуйста, введите целое число для ID.")
