@@ -86,8 +86,9 @@ def generate_act():
 
         # Вызов функции для генерации акта
         try:
-            generate_docx_act(customer, list(work_list), contract_number, doc_date, act_date, total_cost)
-            messagebox.showinfo("Успех", f"Акт сохранен в папке _____ под именем act_{contract_number}.docx")
+            file_path=generate_docx_act(customer, list(work_list), contract_number, doc_date, act_date, total_cost)
+            if file_path:
+                messagebox.showinfo("Успех", f"Акт сохранен: {file_path}")
             actroot.destroy()  # Закрываем окно после успешного выполнения
         except Exception as e:
             messagebox.showerror("Ошибка", f"Произошла ошибка при генерации акта: {e}")
@@ -148,9 +149,14 @@ def generate_contract():
             messagebox.showerror("Ошибка", "Введите корректную стоимость работ")
             return
 
-        generate_docx(customer, list(work_list), payment, completions[0], contract_number, location, doc_date,
-                      total_cost)
-        messagebox.showinfo("Успех", f"Документ сохранен в папке _____ под именем contract_{contract_number}.docx")
+        file_path = generate_docx(customer, list(work_list), payment, completions[0], contract_number, location,
+                                  doc_date,
+                                  total_cost)
+        if file_path:
+            messagebox.showinfo("Успех", f"Документ сохранен: {file_path}")
+        else:
+            messagebox.showwarning("Отмена", "Сохранение отменено пользователем.")
+
 
     except ValueError as e:
         messagebox.showerror("Ошибка", f"Некорректный ввод данных: {e}")

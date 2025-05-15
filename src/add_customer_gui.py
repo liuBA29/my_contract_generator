@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import messagebox
+
 import sqlite3
 
 
@@ -85,7 +86,10 @@ def main():
         entry_dolhnost.delete(0, tk.END)
         entry_short_title.delete(0, tk.END)
 
-    # Создаем главное окно
+
+
+
+        # Создаем главное окно
     root = tk.Tk()
     root.title("Добавление клиентов")
     root.geometry('660x250')
@@ -133,6 +137,8 @@ def main():
 
     # Кнопка для добавления клиента
     tk.Button(root, text="Добавить клиента", command=add_customer).grid(row=10, column=0, columnspan=2)
+
+
 
     # Запуск основного цикла приложения
     root.mainloop()
