@@ -1,13 +1,29 @@
 #src/gui.py
-
+from src.create_db import main as create_db_main
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+try:
+    create_db_main()
+except Exception as e:
+    messagebox.showerror("Ошибка", f"Ошибка при создании базы данных: {e}")
+    exit(1)
+
+
+
 from src.database import (fetch_all_customers, fetch_customer_data, fetch_completion_of_work_by_condition,
                           fetch_all_payment_terms, fetch_payment_terms_by_id)
 from src.document_generator import generate_docx, generate_docx_act
 from tkinter import Button
 import add_customer_gui
+
+
+
+
+
+
+
+
 
 # Функция для фильтрации клиентов по введённому тексту
 def filter_customers(event):
@@ -101,6 +117,7 @@ def generate_act():
 
 def add_customer():
     add_customer_gui.main()
+
 
 
 

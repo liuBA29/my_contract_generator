@@ -1,3 +1,5 @@
+#src/add_customer_gui.py
+
 import tkinter as tk
 from tkinter import messagebox
 
@@ -99,15 +101,15 @@ def main():
     entry_organization_name = tk.Entry(root, width=70)
     entry_organization_name.grid(row=0, column=1)
 
-    tk.Label(root, text="ФИО руководителя").grid(row=1, column=0)
+    tk.Label(root, text="ФИО руководителя (в Род.п.)").grid(row=1, column=0)
     entry_ruler_name = tk.Entry(root, width=70)
     entry_ruler_name.grid(row=1, column=1)
 
-    tk.Label(root, text="На основании").grid(row=2, column=0)
+    tk.Label(root, text="На основании (в Род.п.)").grid(row=2, column=0)
     entry_na_osnovanii = tk.Entry(root, width=70)
     entry_na_osnovanii.grid(row=2, column=1)
 
-    tk.Label(root, text="ИО Фамилия главы организации").grid(row=3, column=0)
+    tk.Label(root, text="И.О. Фамилия (руководителя)").grid(row=3, column=0)
     entry_fio_rukovoditelya = tk.Entry(root, width=70)
     entry_fio_rukovoditelya.grid(row=3, column=1)
 
@@ -127,7 +129,7 @@ def main():
     entry_rs = tk.Entry(root, width=70)
     entry_rs.grid(row=7, column=1)
 
-    tk.Label(root, text="Должность").grid(row=8, column=0)
+    tk.Label(root, text="Должность (в Род.п.)").grid(row=8, column=0)
     entry_dolhnost = tk.Entry(root, width=70)
     entry_dolhnost.grid(row=8, column=1)
 

@@ -2,12 +2,16 @@
 
 import os
 import sqlite3
+import create_db
+
 
 def get_db_connection():
     db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/customers.db'))
     print(f"Используемый путь к базе данных: {db_path}")
     conn = sqlite3.connect(db_path)
     return conn
+
+
 
 def fetch_customer_data(customer_id):
     try:

@@ -1,5 +1,8 @@
+#src/create_db.py
+
 import os
 import sqlite3
+
 
 def main():
     # Создаем путь к базе данных
