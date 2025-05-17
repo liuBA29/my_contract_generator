@@ -1,18 +1,18 @@
 #src/create_db.py
-
+from config import *
 import os
 import sqlite3
 
 
 def main():
     # Создаем путь к базе данных
-    db_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
-    if not os.path.exists(db_folder):
-        os.makedirs(db_folder)
-        print("Создана папка для базы данных:", db_folder)
+    # db_folder = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
+    if not os.path.exists(DATA_DIR):
+        os.makedirs(DATA_DIR)
+        print("Создана папка для базы данных:", DATA_DIR)
 
-    db_path = os.path.join(db_folder, 'customers.db')
-    conn = sqlite3.connect(db_path)
+    #db_path = os.path.join(DATA_DIR, 'customers.db')
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     # Создание таблицы клиентов

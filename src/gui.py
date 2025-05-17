@@ -19,6 +19,12 @@ import add_customer_gui
 
 
 
+def refresh_gui():
+    global customers
+    customers = fetch_all_customers()
+    customer_combobox['values'] = [f"{customer[0]} - {customer[2]}" for customer in customers]
+    customer_combobox.set('')
+    entry_customer_id.delete(0, tk.END)
 
 
 
@@ -218,6 +224,15 @@ customer_combobox.grid(row=0, column=1, padx=10, pady=5)
 add_customer_button = tk.Button(root, text="Добавить клиента", command=add_customer)
 add_customer_button.grid(row=0, column=2, padx=10, pady=5)
 
+recycle_icon = "🔄"
+refresh_button = tk.Button(root, text=f"{recycle_icon}", font=("Arial", 24),  # увеличим, чтобы был кругленький и заметный
+    width=3,  # делаем ширину и высоту близкими, чтобы кнопка казалась круглой
+    height=1,
+    relief="flat",
+   
+    activebackground="#b2ebf2",
+    borderwidth=0, command=refresh_gui)
+refresh_button.grid(row=1, column=2, padx=10, pady=5)
 
 
 # Заполнение выпадающего списка клиентами
