@@ -6,9 +6,29 @@
   <component name="ChangeListManager">
     <list default="true" id="824d2b25-ff24-4f66-a891-88d960aef178" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/add_customer_gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/add_customer_gui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/Analysis-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/EXE-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/PKG-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/PYZ-00.pyz" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/PYZ-00.pyz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/PYZ-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/PYZ-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/base_library.zip" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/base_library.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/gui.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/gui.pkg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/warn-gui.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/warn-gui.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/xref-gui.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/xref-gui.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/check1.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/check1.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/config.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/config.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/create_db.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/create_db.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/database.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/database.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dist/gui.exe" beforeDir="false" afterPath="$PROJECT_DIR$/src/dist/gui.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/document_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/document_generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/edit_customer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/edit_customer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gui.spec" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui.spec" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pyinstaller_text.docx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pyinstaller_text.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/test.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/test2.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -59,7 +79,7 @@
     &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/admindell/PycharmProjects/my_contract_generator&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/admindell/PycharmProjects/toico&quot;,
     &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
   }
 }</component>
@@ -120,7 +140,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/gui.py</url>
-          <line>313</line>
+          <line>323</line>
           <option name="timeStamp" value="1" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -132,6 +152,11 @@
           <url>file://$PROJECT_DIR$/src/database.py</url>
           <line>2</line>
           <option name="timeStamp" value="3" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/gui.py</url>
+          <line>158</line>
+          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

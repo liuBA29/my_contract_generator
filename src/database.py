@@ -1,14 +1,18 @@
 # src/database.py
 
-import os
+import os, sys
 import sqlite3
 import create_db
+from config import *
+
 
 
 def get_db_connection():
-    db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/customers.db'))
-    print(f"Используемый путь к базе данных: {db_path}")
-    conn = sqlite3.connect(db_path)
+    if not os.path.exists(DATA_DIR):
+        os.makedirs(DATA_DIR)
+        print("Создана папка для базы данных:", DATA_DIR)
+    conn = sqlite3.connect(DB_PATH)
+
     return conn
 
 

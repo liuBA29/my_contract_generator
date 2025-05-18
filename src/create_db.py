@@ -1,6 +1,6 @@
 #src/create_db.py
 from config import *
-import os
+import os, sys
 import sqlite3
 
 

@@ -1,4 +1,5 @@
 #src/gui.py
+
 from src.create_db import main as create_db_main
 import tkinter as tk
 from tkinter import ttk
@@ -118,7 +119,7 @@ def generate_act():
     generate_button = tk.Button(actroot, text="Принять", command=on_accept)
     generate_button.grid(row=1, column=1, padx=10, pady=10)
 
-    actroot.mainloop()
+
 
 
 def add_customer():
@@ -149,11 +150,21 @@ def generate_contract():
 
         if payment_condition == 'предоплата':
             payment_terms = fetch_all_payment_terms()
-            term_id = payment_term_var.get().strip()
-            if not term_id:
+            print(f"all-paymeeeents-terms---{payment_terms}")
+           # term_id = payment_term_var.get().strip() -- неправиильно
+            prepayment_percentage = payment_term_var.get().strip()
+            print(f"prepayment_percentage--{prepayment_percentage}")
+            if not prepayment_percentage:
                 messagebox.showerror("Ошибка", "Выберите процент предоплаты")
                 return
-            term_id = int(term_id)
+            prepayment_percentage = int(prepayment_percentage)
+            print(type(prepayment_percentage))
+
+            term_id=None
+            for term in payment_terms:
+                if term[1] == prepayment_percentage:
+                    term_id = term[0]
+
             payment = fetch_payment_terms_by_id(term_id)
             if payment is None:
                 messagebox.showerror("Ошибка", "Процент предоплаты не найден")
@@ -201,8 +212,7 @@ def update_payment_terms(event):
         # Получаем все условия оплаты
         payment_terms = fetch_all_payment_terms()
         # Фильтруем условия, исключая те, у которых процент равен 0%
-
-        filtered_payment_terms = [str(row[0]) for row in payment_terms if row[1] > 0]  # Предполагается, что row[1] это процент предоплаты
+        filtered_payment_terms = [str(row[1]) for row in payment_terms if row[1] > 0]  # Предполагается, что row[1] это процент предоплаты
 
 
         payment_term_combobox['values'] = filtered_payment_terms
@@ -229,7 +239,7 @@ refresh_button = tk.Button(root, text=f"{recycle_icon}", font=("Arial", 24),  # 
     width=3,  # делаем ширину и высоту близкими, чтобы кнопка казалась круглой
     height=1,
     relief="flat",
-   
+
     activebackground="#b2ebf2",
     borderwidth=0, command=refresh_gui)
 refresh_button.grid(row=1, column=2, padx=10, pady=5)
@@ -244,7 +254,7 @@ customer_combobox.bind("<<ComboboxSelected>>", update_customer_id)  # Обнов
 customer_combobox.bind('<KeyRelease>', filter_customers)  # Фильтрует клиентов при вводе текста
 
 # Поле для ввода ID клиента
-tk.Label(root, text="Введите ID клиента:").grid(row=1, column=0, sticky="w", padx=10, pady=5)
+tk.Label(root, text="или введите ID клиента:").grid(row=1, column=0, sticky="w", padx=10, pady=5)
 entry_customer_id = tk.Entry(root, width=50)
 entry_customer_id.grid(row=1, column=1, padx=10, pady=5)
 
@@ -306,13 +316,13 @@ entry_total_cost = tk.Entry(root, width=50)
 entry_total_cost.grid(row=9, column=1, padx=10, pady=5)
 
 # Кнопка для генерации договора
-generate_button = tk.Button(root, text="Сгенерировать договор", command=generate_contract)
-generate_button.grid(row=10, column=1, padx=10, pady=10)
+generate_contract_button = tk.Button(root, text="Сгенерировать договор", command=generate_contract)
+generate_contract_button.grid(row=10, column=1, padx=10, pady=10)
 
 
 # Кнопка для генерации договора
-generate_button = tk.Button(root, text="Сгенерировать акт", command=generate_act)
-generate_button.grid(row=11, column=1, padx=10, pady=10)
+generate_act_button = tk.Button(root, text="Сгенерировать акт", command=generate_act)
+generate_act_button.grid(row=11, column=1, padx=10, pady=10)
 
 
 

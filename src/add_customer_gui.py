@@ -4,11 +4,17 @@ import tkinter as tk
 from tkinter import messagebox
 
 import sqlite3
+import os, sys
+from config import DB_PATH, DATA_DIR
 
 
 def main():
     # Подключаемся к базе данных (если базы нет, то она будет создана)
-    conn = sqlite3.connect('../data/customers.db')
+    if not os.path.exists(DATA_DIR):
+        os.makedirs(DATA_DIR)
+
+    conn = sqlite3.connect(DB_PATH)
+
     cursor = conn.cursor()
 
     # Создаем таблицу, если ее нет

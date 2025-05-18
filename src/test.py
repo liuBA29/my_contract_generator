@@ -1,5 +1,5 @@
 import sqlite3
-import os
+import os, sys
 import tkinter as tk
 from tkinter import ttk
 

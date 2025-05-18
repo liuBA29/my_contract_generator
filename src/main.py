@@ -7,18 +7,19 @@ from src.database import *
 from src.document_generator import *
 from src.user_input import get_user_input
 from tkinter import filedialog, messagebox
+from  config import *
+import os, sys
 
 def display_options(title, options):
-    print(title)
+    print(f"\n{title}")
     for option in options:
         print(f"ID: {option[0]}, Данные: {option[1]}")
     print()
 
 def main():
     print(f"Текущий рабочий каталог: {os.getcwd()}")
+    print(f"Путь к базе данных: {DB_PATH}")
 
-    DB_PATH = os.path.abspath(os.path.join(os.getcwd(), '../data/customers.db'))
-    print(f"Проверка базы данных по пути: {DB_PATH}")
 
 
     try:

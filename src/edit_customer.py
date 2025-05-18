@@ -3,9 +3,12 @@
 import tkinter as tk
 from tkinter import messagebox
 import sqlite3
+from config import *
+import os, sys
+
 
 def main():
-    conn = sqlite3.connect('../data/customers.db')
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
     cursor.execute('''
