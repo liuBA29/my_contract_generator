@@ -1,4 +1,5 @@
 #src/gui.py
+# переписать код полностью! но без combox, зато в отдельном окне Toplevel с Listbox
 
 from src.create_db import main as create_db_main
 import tkinter as tk
@@ -35,8 +36,8 @@ def refresh_gui():
 # Функция для фильтрации клиентов по введённому тексту
 def filter_customers(event):
     search_term = customer_combobox.get().strip().lower()
-    filtered_customers = [f"{customer[0]} - {customer[2]}" for customer in customers if
-                          search_term in customer[2].lower()]
+    filtered_customers = [f"{customer[0]} - {customer[1]}" for customer in customers if
+                          search_term in customer[1].lower()]
 
     # Сохраняем текущий текст, позицию курсора и выделенный текст
     current_text = customer_combobox.get()
@@ -247,7 +248,7 @@ refresh_button.grid(row=1, column=2, padx=10, pady=5)
 
 # Заполнение выпадающего списка клиентами
 customers = fetch_all_customers()
-customer_combobox['values'] = [f"{customer[0]} - {customer[2]}" for customer in customers]
+customer_combobox['values'] = [f"{customer[0]} - {customer[1]}" for customer in customers]
 
 # Привязка событий к combobox
 customer_combobox.bind("<<ComboboxSelected>>", update_customer_id)  # Обновляет ID при выборе клиента
