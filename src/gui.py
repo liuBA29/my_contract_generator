@@ -1,5 +1,5 @@
 #src/gui.py
-# переписать код полностью! но без combox, зато в отдельном окне Toplevel с Listbox
+#
 
 from src.create_db import main as create_db_main
 import tkinter as tk
@@ -148,7 +148,7 @@ def generate_contract():
         if not completions:
             messagebox.showerror("Ошибка", "Условия оплаты не найдены")
             return
-
+#===========================================
         if payment_condition == 'предоплата':
             payment_terms = fetch_all_payment_terms()
             print(f"all-paymeeeents-terms---{payment_terms}")
@@ -272,7 +272,7 @@ tk.Label(root, text="Выберите процент предоплаты:").gri
 payment_term_var = tk.StringVar()
 payment_term_combobox = ttk.Combobox(root, textvariable=payment_term_var, state="disabled")
 payment_term_combobox.grid(row=3, column=1, padx=10, pady=5)
-
+#==========================================================
 # Поле для ввода номера договора
 tk.Label(root, text="Введите номер договора:").grid(row=4, column=0, sticky="w", padx=10, pady=5)
 entry_contract_number = tk.Entry(root, width=50)
@@ -324,9 +324,6 @@ generate_contract_button.grid(row=10, column=1, padx=10, pady=10)
 # Кнопка для генерации договора
 generate_act_button = tk.Button(root, text="Сгенерировать акт", command=generate_act)
 generate_act_button.grid(row=11, column=1, padx=10, pady=10)
-
-
-
 
 
 # Запуск главного окна

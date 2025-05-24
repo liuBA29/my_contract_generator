@@ -1,6 +1,7 @@
-# src/gui.py
+# src/test_customers.py
 from src.create_db import main as create_db_main
 import tkinter as tk
+from tkinter import ttk
 from tkinter import messagebox
 try:
     create_db_main()
@@ -15,6 +16,9 @@ import add_customer_gui
 
 # --- Глобальные данные ---
 customers = fetch_all_customers()
+
+
+
 
 def refresh_customers():
     global customers
@@ -119,7 +123,8 @@ def generate_act():
             messagebox.showerror("Ошибка", "Введите дату договора в основном окне")
             return
 
-        work_list = work_listbox.get(0, tk.END)
+        work_list = [child.winfo_children()[0].cget("text") for child in work_entries]
+
         if not work_list:
             messagebox.showerror("Ошибка", "Введите работы в основном окне")
             return
@@ -159,11 +164,13 @@ def generate_contract():
         if not completions:
             messagebox.showerror("Ошибка", "Условия оплаты не найдены")
             return
-
+#===================================
         # Если предоплата, то выбираем процент вручную через текстовое поле
         if payment_condition == 'предоплата':
             payment_terms = fetch_all_payment_terms()
-            prepayment_percentage = entry_prepay_percent.get().strip()
+            print(f"all-paymeeeents-terms---{payment_terms}")
+            prepayment_percentage = payment_term_var.get().strip()
+            print(f"prepayment_percentage--{prepayment_percentage}")
             if not prepayment_percentage:
                 messagebox.showerror("Ошибка", "Введите процент предоплаты")
                 return
@@ -188,7 +195,8 @@ def generate_contract():
         contract_number = entry_contract_number.get().strip()
         location = entry_location.get().strip()
         doc_date = entry_doc_date.get().strip()
-        work_list = work_listbox.get(0, tk.END)
+        work_list = [child.winfo_children()[0].cget("text") for child in work_entries]
+
 
         try:
             total_cost = float(entry_total_cost.get().strip())
@@ -209,18 +217,43 @@ def generate_contract():
     except Exception as e:
         messagebox.showerror("Ошибка", f"Произошла ошибка: {e}")
 
-def update_payment_terms(event=None):
+def update_payment_terms(event):
     if payment_condition_var.get() == "предоплата":
-        entry_prepay_percent.config(state="normal")
+        payment_term_combobox.config(state="normal")
+        # Получаем все условия оплаты
+        payment_terms = fetch_all_payment_terms()
+        # Фильтруем условия, исключая те, у которых процент равен 0%
+        filtered_payment_terms = [str(row[1]) for row in payment_terms if row[1] > 0]  # Предполагается, что row[1] это процент предоплаты
+
+
+        payment_term_combobox['values'] = filtered_payment_terms
     else:
-        entry_prepay_percent.delete(0, tk.END)
-        entry_prepay_percent.config(state="disabled")
+        payment_term_combobox.config(state="disabled")
+        payment_term_combobox.set('')
 
 def add_work():
-    work = entry_work.get()
+    work = entry_work.get().strip()
     if work:
-        work_listbox.insert(tk.END, work)
+        work_row = tk.Frame(work_frame)
+        work_row.pack(fill="x", pady=2)
+
+        label = tk.Label(work_row, text=work, anchor="w")
+        label.pack(side="left", fill="x", expand=True)
+
+        def remove():
+            work_row.destroy()
+            work_entries.remove(work_row)
+
+        remove_button = tk.Button(work_row, text="✖", command=remove, fg="red", bd=0, font=("Arial", 12, "bold"))
+        remove_button.pack(side="right")
+
+        work_entries.append(work_row)
         entry_work.delete(0, tk.END)
+
+
+
+
+
 
 def refresh_gui():
     refresh_customers()
@@ -250,45 +283,61 @@ tk.Label(root, text="ID клиента:").grid(row=1, column=0, sticky="w", padx
 entry_customer_id = tk.Entry(root, width=15)
 entry_customer_id.grid(row=1, column=1, sticky="w", padx=10, pady=5)
 
-# Номер договора
-tk.Label(root, text="Номер договора:").grid(row=2, column=0, sticky="w", padx=10, pady=5)
-entry_contract_number = tk.Entry(root, width=30)
-entry_contract_number.grid(row=2, column=1, sticky="w", padx=10, pady=5)
+#===================================================
 
-# Место заключения договора
-tk.Label(root, text="Место заключения договора:").grid(row=3, column=0, sticky="w", padx=10, pady=5)
-entry_location = tk.Entry(root, width=30)
-entry_location.grid(row=3, column=1, sticky="w", padx=10, pady=5)
+
+# Поле для ввода номера договора
+tk.Label(root, text="Введите номер договора:").grid(row=2, column=0, sticky="w", padx=10, pady=5)
+entry_contract_number = tk.Entry(root, width=50)
+entry_contract_number.grid(row=2, column=1, padx=10, pady=5)
+
 
 # Дата договора
-tk.Label(root, text="Дата договора (дд.мм.гггг):").grid(row=4, column=0, sticky="w", padx=10, pady=5)
+tk.Label(root, text="Дата договора (дд.мм.гггг):").grid(row=3, column=0, sticky="w", padx=10, pady=5)
 entry_doc_date = tk.Entry(root, width=30)
-entry_doc_date.grid(row=4, column=1, sticky="w", padx=10, pady=5)
+entry_doc_date.grid(row=3, column=1, sticky="w", padx=10, pady=5)
 
-# Условия оплаты
-payment_condition_var = tk.StringVar(value="полная оплата")
-tk.Label(root, text="Условия оплаты:").grid(row=5, column=0, sticky="w", padx=10, pady=5)
-payment_options = ["полная оплата", "предоплата"]
-for i, option in enumerate(payment_options):
-    rb = tk.Radiobutton(root, text=option, variable=payment_condition_var, value=option,
-                        command=update_payment_terms)
-    rb.grid(row=5, column=1+i, sticky="w", padx=5, pady=5)
 
-# Процент предоплаты (текстовое поле, включается при выборе "предоплата")
-tk.Label(root, text="Процент предоплаты (%):").grid(row=6, column=0, sticky="w", padx=10, pady=5)
-entry_prepay_percent = tk.Entry(root, width=10, state="disabled")
-entry_prepay_percent.grid(row=6, column=1, sticky="w", padx=10, pady=5)
+# Поле для выбора типа оплаты
+tk.Label(root, text="Выберите тип оплаты:").grid(row=4, column=0, sticky="w", padx=10, pady=5)
+payment_condition_var = tk.StringVar()
+payment_condition_combobox = ttk.Combobox(root, textvariable=payment_condition_var, values=["предоплата", "постоплата"],
+                                          state="readonly")
+payment_condition_combobox.grid(row=4, column=1, padx=10, pady=5)
+payment_condition_combobox.bind("<<ComboboxSelected>>", update_payment_terms)
 
-# Список работ
+
+# Поле для выбора процента предоплаты
+tk.Label(root, text="Выберите процент предоплаты:").grid(row=5, column=0, sticky="w", padx=10, pady=5)
+payment_term_var = tk.StringVar()
+payment_term_combobox = ttk.Combobox(root, textvariable=payment_term_var, state="disabled")
+payment_term_combobox.grid(row=5, column=1, padx=10, pady=5)
+
+
+
+# Поле для ввода места проведения работ
+tk.Label(root, text="Введите место проведения работ:").grid(row=6, column=0, sticky="w", padx=10, pady=5)
+entry_location = tk.Entry(root, width=50)
+entry_location.grid(row=6, column=1, padx=10, pady=5)
+
+
+
+
+
+
 tk.Label(root, text="Работы:").grid(row=7, column=0, sticky="nw", padx=10, pady=5)
-work_listbox = tk.Listbox(root, width=50, height=8)
-work_listbox.grid(row=7, column=1, sticky="w", padx=10, pady=5)
+work_frame = tk.Frame(root)
+work_frame.grid(row=7, column=1, columnspan=2, sticky="we", padx=10, pady=5)
+
+# Список для хранения виджетов работ
+work_entries = []
 
 # Добавление работы
 entry_work = tk.Entry(root, width=30)
 entry_work.grid(row=8, column=1, sticky="w", padx=10, pady=5)
 btn_add_work = tk.Button(root, text="Добавить работу", command=add_work)
 btn_add_work.grid(row=8, column=2, padx=10, pady=5)
+
 
 # Общая стоимость
 tk.Label(root, text="Общая стоимость:").grid(row=9, column=0, sticky="w", padx=10, pady=5)
