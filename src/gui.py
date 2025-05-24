@@ -1,19 +1,43 @@
 #src/gui.py
+#
 
+from src.create_db import main as create_db_main
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+try:
+    create_db_main()
+except Exception as e:
+    messagebox.showerror("Ошибка", f"Ошибка при создании базы данных: {e}")
+    exit(1)
+
+
+
 from src.database import (fetch_all_customers, fetch_customer_data, fetch_completion_of_work_by_condition,
                           fetch_all_payment_terms, fetch_payment_terms_by_id)
 from src.document_generator import generate_docx, generate_docx_act
 from tkinter import Button
 import add_customer_gui
 
+
+
+def refresh_gui():
+    global customers
+    customers = fetch_all_customers()
+    customer_combobox['values'] = [f"{customer[0]} - {customer[2]}" for customer in customers]
+    customer_combobox.set('')
+    entry_customer_id.delete(0, tk.END)
+
+
+
+
+
+
 # Функция для фильтрации клиентов по введённому тексту
 def filter_customers(event):
     search_term = customer_combobox.get().strip().lower()
-    filtered_customers = [f"{customer[0]} - {customer[2]}" for customer in customers if
-                          search_term in customer[2].lower()]
+    filtered_customers = [f"{customer[0]} - {customer[1]}" for customer in customers if
+                          search_term in customer[1].lower()]
 
     # Сохраняем текущий текст, позицию курсора и выделенный текст
     current_text = customer_combobox.get()
@@ -86,8 +110,9 @@ def generate_act():
 
         # Вызов функции для генерации акта
         try:
-            generate_docx_act(customer, list(work_list), contract_number, doc_date, act_date, total_cost)
-            messagebox.showinfo("Успех", f"Акт сохранен в папке _____ под именем act_{contract_number}.docx")
+            file_path=generate_docx_act(customer, list(work_list), contract_number, doc_date, act_date, total_cost)
+            if file_path:
+                messagebox.showinfo("Успех", f"Акт сохранен: {file_path}")
             actroot.destroy()  # Закрываем окно после успешного выполнения
         except Exception as e:
             messagebox.showerror("Ошибка", f"Произошла ошибка при генерации акта: {e}")
@@ -95,11 +120,12 @@ def generate_act():
     generate_button = tk.Button(actroot, text="Принять", command=on_accept)
     generate_button.grid(row=1, column=1, padx=10, pady=10)
 
-    actroot.mainloop()
+
 
 
 def add_customer():
     add_customer_gui.main()
+
 
 
 
@@ -122,14 +148,24 @@ def generate_contract():
         if not completions:
             messagebox.showerror("Ошибка", "Условия оплаты не найдены")
             return
-
+#===========================================
         if payment_condition == 'предоплата':
             payment_terms = fetch_all_payment_terms()
-            term_id = payment_term_var.get().strip()
-            if not term_id:
+            print(f"all-paymeeeents-terms---{payment_terms}")
+           # term_id = payment_term_var.get().strip() -- неправиильно
+            prepayment_percentage = payment_term_var.get().strip()
+            print(f"prepayment_percentage--{prepayment_percentage}")
+            if not prepayment_percentage:
                 messagebox.showerror("Ошибка", "Выберите процент предоплаты")
                 return
-            term_id = int(term_id)
+            prepayment_percentage = int(prepayment_percentage)
+            print(type(prepayment_percentage))
+
+            term_id=None
+            for term in payment_terms:
+                if term[1] == prepayment_percentage:
+                    term_id = term[0]
+
             payment = fetch_payment_terms_by_id(term_id)
             if payment is None:
                 messagebox.showerror("Ошибка", "Процент предоплаты не найден")
@@ -148,9 +184,14 @@ def generate_contract():
             messagebox.showerror("Ошибка", "Введите корректную стоимость работ")
             return
 
-        generate_docx(customer, list(work_list), payment, completions[0], contract_number, location, doc_date,
-                      total_cost)
-        messagebox.showinfo("Успех", f"Документ сохранен в папке _____ под именем contract_{contract_number}.docx")
+        file_path = generate_docx(customer, list(work_list), payment, completions[0], contract_number, location,
+                                  doc_date,
+                                  total_cost)
+        if file_path:
+            messagebox.showinfo("Успех", f"Документ сохранен: {file_path}")
+        else:
+            messagebox.showwarning("Отмена", "Сохранение отменено пользователем.")
+
 
     except ValueError as e:
         messagebox.showerror("Ошибка", f"Некорректный ввод данных: {e}")
@@ -172,8 +213,7 @@ def update_payment_terms(event):
         # Получаем все условия оплаты
         payment_terms = fetch_all_payment_terms()
         # Фильтруем условия, исключая те, у которых процент равен 0%
-
-        filtered_payment_terms = [str(row[0]) for row in payment_terms if row[1] > 0]  # Предполагается, что row[1] это процент предоплаты
+        filtered_payment_terms = [str(row[1]) for row in payment_terms if row[1] > 0]  # Предполагается, что row[1] это процент предоплаты
 
 
         payment_term_combobox['values'] = filtered_payment_terms
@@ -195,18 +235,27 @@ customer_combobox.grid(row=0, column=1, padx=10, pady=5)
 add_customer_button = tk.Button(root, text="Добавить клиента", command=add_customer)
 add_customer_button.grid(row=0, column=2, padx=10, pady=5)
 
+recycle_icon = "🔄"
+refresh_button = tk.Button(root, text=f"{recycle_icon}", font=("Arial", 24),  # увеличим, чтобы был кругленький и заметный
+    width=3,  # делаем ширину и высоту близкими, чтобы кнопка казалась круглой
+    height=1,
+    relief="flat",
+
+    activebackground="#b2ebf2",
+    borderwidth=0, command=refresh_gui)
+refresh_button.grid(row=1, column=2, padx=10, pady=5)
 
 
 # Заполнение выпадающего списка клиентами
 customers = fetch_all_customers()
-customer_combobox['values'] = [f"{customer[0]} - {customer[2]}" for customer in customers]
+customer_combobox['values'] = [f"{customer[0]} - {customer[1]}" for customer in customers]
 
 # Привязка событий к combobox
 customer_combobox.bind("<<ComboboxSelected>>", update_customer_id)  # Обновляет ID при выборе клиента
 customer_combobox.bind('<KeyRelease>', filter_customers)  # Фильтрует клиентов при вводе текста
 
 # Поле для ввода ID клиента
-tk.Label(root, text="Введите ID клиента:").grid(row=1, column=0, sticky="w", padx=10, pady=5)
+tk.Label(root, text="или введите ID клиента:").grid(row=1, column=0, sticky="w", padx=10, pady=5)
 entry_customer_id = tk.Entry(root, width=50)
 entry_customer_id.grid(row=1, column=1, padx=10, pady=5)
 
@@ -223,7 +272,7 @@ tk.Label(root, text="Выберите процент предоплаты:").gri
 payment_term_var = tk.StringVar()
 payment_term_combobox = ttk.Combobox(root, textvariable=payment_term_var, state="disabled")
 payment_term_combobox.grid(row=3, column=1, padx=10, pady=5)
-
+#==========================================================
 # Поле для ввода номера договора
 tk.Label(root, text="Введите номер договора:").grid(row=4, column=0, sticky="w", padx=10, pady=5)
 entry_contract_number = tk.Entry(root, width=50)
@@ -268,16 +317,13 @@ entry_total_cost = tk.Entry(root, width=50)
 entry_total_cost.grid(row=9, column=1, padx=10, pady=5)
 
 # Кнопка для генерации договора
-generate_button = tk.Button(root, text="Сгенерировать договор", command=generate_contract)
-generate_button.grid(row=10, column=1, padx=10, pady=10)
+generate_contract_button = tk.Button(root, text="Сгенерировать договор", command=generate_contract)
+generate_contract_button.grid(row=10, column=1, padx=10, pady=10)
 
 
 # Кнопка для генерации договора
-generate_button = tk.Button(root, text="Сгенерировать акт", command=generate_act)
-generate_button.grid(row=11, column=1, padx=10, pady=10)
-
-
-
+generate_act_button = tk.Button(root, text="Сгенерировать акт", command=generate_act)
+generate_act_button.grid(row=11, column=1, padx=10, pady=10)
 
 
 # Запуск главного окна

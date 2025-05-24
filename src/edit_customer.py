@@ -1,13 +1,16 @@
+# crc/edit_customer.py
+
 import tkinter as tk
 from tkinter import messagebox
 import sqlite3
+from config import *
+import os, sys
+
 
 def main():
-    # Подключаемся к базе данных (если базы нет, то она будет создана)
-    conn = sqlite3.connect('../data/customers.db')
+    conn = sqlite3.connect(DB_PATH)
     cursor = conn.cursor()
 
-    # Создаем таблицу, если ее нет
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS customers (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -23,9 +26,64 @@ def main():
             short_title TEXT
         )
     ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS completion_of_work (
+            completion_id INTEGER PRIMARY KEY,
+            completion_date TEXT,
+            payment_term_id INTEGER,
+            payment_condition TEXT,
+            completion_condition TEXT
+        )
+    ''')
+    print("Таблица completion_of_work проверена/создана.")
+
+    cursor.execute('SELECT COUNT(*) FROM completion_of_work')
+    count = cursor.fetchone()[0]
+    if count == 0:
+        values = [
+            (0, 'после подписания сторонами настоящего договора', 0, 'постоплата',
+             'Заказчик производит оплату работ в течение'),
+            (1, 'с момента поступления на счет Исполнителя вышеупомянутой предоплаты', 1, 'предоплата',
+             'Остальную сумму Заказчик обязуется выплатить Исполнителю в течение'),
+            (2, 'с момента поступления на счет Исполнителя вышеупомянутой предоплаты', 2, 'предоплата',
+             'Остальную сумму Заказчик обязуется выплатить Исполнителю в течение'),
+            (3, 'с момента поступления на счет Исполнителя вышеупомянутой предоплаты', 3, 'предоплата', None)
+        ]
+        cursor.executemany('''
+            INSERT INTO completion_of_work (completion_id, completion_date, payment_term_id, payment_condition, completion_condition)
+            VALUES (?, ?, ?, ?, ?)
+        ''', values)
+        print("Таблица completion_of_work заполнена начальными значениями.")
+    else:
+        print(f"Таблица completion_of_work уже содержит данные (записей: {count}).")
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS payment_terms (
+            term_id INTEGER PRIMARY KEY,
+            prepayment_percentage INTEGER,
+            remaining_payment INTEGER,
+            advance_payment INTEGER
+        )
+    ''')
+
+    cursor.execute('SELECT COUNT(*) FROM payment_terms')
+    count = cursor.fetchone()[0]
+
+    if count == 0:
+        terms = [
+            (0, 0, 100, 0),
+            (1, 25, 75, 25),
+            (2, 50, 50, 50),
+            (3, 100, 0, 100)
+        ]
+        cursor.executemany('''
+            INSERT INTO payment_terms (term_id, prepayment_percentage, remaining_payment, advance_payment)
+            VALUES (?, ?, ?, ?)
+        ''', terms)
+
     conn.commit()
 
-    # Функция для добавления клиента в базу данных
     def add_customer():
         organization_name = entry_organization_name.get()
         ruler_name = entry_ruler_name.get()
@@ -39,7 +97,6 @@ def main():
         short_title = entry_short_title.get()
 
         if all([organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost, short_title]):
-            # Проверка на дубликаты без учета регистра
             cursor.execute('''
                 SELECT * FROM customers 
                 WHERE LOWER(organization_name) = LOWER(?) 
@@ -48,12 +105,10 @@ def main():
             existing_customer = cursor.fetchone()
 
             if existing_customer:
-                # Если клиент с таким именем или сокращенным названием уже есть
                 response = messagebox.askyesno("Дубликат", "Клиент с таким названием или сокращенным названием уже существует. Добавить дубликат?")
                 if not response:
                     return
 
-            # Добавление клиента в базу данных, если дубликат не был найден или пользователь согласился на добавление
             cursor.execute('''
                 INSERT INTO customers (organization_name, ruler_name, na_osnovanii, fio_rukovoditelya, address, unp, okpo, rs, dolhnost, short_title)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
@@ -76,59 +131,38 @@ def main():
         entry_dolhnost.delete(0, tk.END)
         entry_short_title.delete(0, tk.END)
 
-    # Создаем главное окно
     root = tk.Tk()
     root.title("Добавление клиентов")
     root.geometry('660x250')
 
-    # Метки и поля ввода
-    tk.Label(root, text="Название организации").grid(row=0, column=0)
-    entry_organization_name = tk.Entry(root, width=70)
-    entry_organization_name.grid(row=0, column=1)
+    labels = [
+        "Название организации",
+        "ФИО руководителя (в Р.п.)",
+        "На основании: ",
+        "И.О. Фамилия (руководителя)",
+        "Адрес",
+        "УНП",
+        "ОКПО",
+        "Р/счет, банк, S.W.I.F.T., адрес банка",
+        "Должность (в Р.п.)",
+        "Сокращенное название организации"
+    ]
+    entries = []
 
-    tk.Label(root, text="ФИО руководителя").grid(row=1, column=0)
-    entry_ruler_name = tk.Entry(root, width=70)
-    entry_ruler_name.grid(row=1, column=1)
+    for i, text in enumerate(labels):
+        tk.Label(root, text=text).grid(row=i, column=0, sticky='w')
+        entry = tk.Entry(root, width=70)
+        entry.grid(row=i, column=1)
+        entries.append(entry)
 
-    tk.Label(root, text="На основании").grid(row=2, column=0)
-    entry_na_osnovanii = tk.Entry(root, width=70)
-    entry_na_osnovanii.grid(row=2, column=1)
+    (entry_organization_name, entry_ruler_name, entry_na_osnovanii,
+     entry_fio_rukovoditelya, entry_address, entry_unp, entry_okpo,
+     entry_rs, entry_dolhnost, entry_short_title) = entries
 
-    tk.Label(root, text="ИО Фамилия главы организации").grid(row=3, column=0)
-    entry_fio_rukovoditelya = tk.Entry(root, width=70)
-    entry_fio_rukovoditelya.grid(row=3, column=1)
+    tk.Button(root, text="Добавить клиента", command=add_customer).grid(row=10, column=0, columnspan=2, pady=10)
 
-    tk.Label(root, text="Адрес").grid(row=4, column=0)
-    entry_address = tk.Entry(root, width=70)
-    entry_address.grid(row=4, column=1)
-
-    tk.Label(root, text="УНП").grid(row=5, column=0)
-    entry_unp = tk.Entry(root, width=70)
-    entry_unp.grid(row=5, column=1)
-
-    tk.Label(root, text="ОКПО").grid(row=6, column=0)
-    entry_okpo = tk.Entry(root, width=70)
-    entry_okpo.grid(row=6, column=1)
-
-    tk.Label(root, text="Р/счет, банк, S.W.I.F.T., адрес банка").grid(row=7, column=0)
-    entry_rs = tk.Entry(root, width=70)
-    entry_rs.grid(row=7, column=1)
-
-    tk.Label(root, text="Должность").grid(row=8, column=0)
-    entry_dolhnost = tk.Entry(root, width=70)
-    entry_dolhnost.grid(row=8, column=1)
-
-    tk.Label(root, text="Сокращенное название организации").grid(row=9, column=0)
-    entry_short_title = tk.Entry(root, width=70)
-    entry_short_title.grid(row=9, column=1)
-
-    # Кнопка для добавления клиента
-    tk.Button(root, text="Добавить клиента", command=add_customer).grid(row=10, column=0, columnspan=2)
-
-    # Запуск основного цикла приложения
     root.mainloop()
 
-    # Закрытие соединения с базой данных при закрытии приложения
     conn.close()
 
 if __name__ == '__main__':

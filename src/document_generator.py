@@ -4,7 +4,7 @@ from docx import Document
 from docx.shared import Pt, Inches
 from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from num2words import num2words
-import os
+import os, sys
 from tkinter import filedialog
 
 

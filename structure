@@ -3,8 +3,6 @@ my_contract_generator/
 ├── data/
 │   └── customers.db          # SQLite база данных
 │
-├── docs_out/
-│   # Здесь будут сохраняться сгенерированные документы
 │
 ├── src/
 │   ├── __init__.py

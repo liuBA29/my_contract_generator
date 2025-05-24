@@ -1,5 +1,5 @@
 import sqlite3
-import os
+import os, sys
 
 def get_table_structure(table_name):
     db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../data/customers.db'))
