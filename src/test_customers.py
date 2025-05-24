@@ -1,5 +1,4 @@
 # src/test_customers.py
-# src/test_customers.py
 from src.create_db import main as create_db_main
 import tkinter as tk
 from tkinter import ttk
@@ -17,6 +16,9 @@ import add_customer_gui
 
 # --- Глобальные данные ---
 customers = fetch_all_customers()
+
+
+
 
 def refresh_customers():
     global customers
@@ -50,6 +52,7 @@ def open_customer_selector():
         for cust in data:
             listbox.insert(tk.END, f"{cust[0]} - {cust[1]}")
 
+    selector.fill_listbox = fill_listbox  # <<< сохраняем ссылку для внешнего выз
     fill_listbox()
 
     def on_search_change(*args):
@@ -70,6 +73,7 @@ def open_customer_selector():
         customer_id = selected.split(" - ")[0]
         entry_customer_id.delete(0, tk.END)
         entry_customer_id.insert(0, customer_id)
+
         selector.destroy()
 
     listbox.bind('<Double-Button-1>', on_select)
@@ -77,9 +81,16 @@ def open_customer_selector():
     btn_select = tk.Button(selector, text="Выбрать", command=on_select)
     btn_select.pack(padx=10, pady=5, anchor="e")
 
+    # сохраняем окно выбора глобально
+    global customer_selector_window
+    customer_selector_window = selector
+
+
 def add_customer():
     add_customer_gui.main()
     refresh_customers()
+    open_customer_selector()  # Заново открыть окно выбора
+
 
 def generate_act():
     actroot = tk.Toplevel(root)
