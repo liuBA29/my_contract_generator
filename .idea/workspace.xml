@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="824d2b25-ff24-4f66-a891-88d960aef178" name="Changes" comment="" />
+    <list default="true" id="824d2b25-ff24-4f66-a891-88d960aef178" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/my_contract_generator.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/my_contract_generator.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/document_generator.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/document_generator.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/gui.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/gui.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test_customers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/test_customers.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -115,11 +122,6 @@
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/gui.py</url>
-          <line>324</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/add_customer_gui.py</url>
           <line>2</line>
           <option name="timeStamp" value="2" />
@@ -128,11 +130,6 @@
           <url>file://$PROJECT_DIR$/src/database.py</url>
           <line>2</line>
           <option name="timeStamp" value="3" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/gui.py</url>
-          <line>159</line>
-          <option name="timeStamp" value="4" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

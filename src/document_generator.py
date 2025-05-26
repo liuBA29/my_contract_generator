@@ -6,8 +6,21 @@ from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 from num2words import num2words
 import os, sys
 from tkinter import filedialog
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+USER_COMPANY = os.getenv("USER_COMPANY", 'ООО "Ваша компания"')
+USER_COMPANY_SHORT = os.getenv("USER_COMPANY_SHORT", 'ООО "Ваша компания"')
+USER_NAME = os.getenv("USER_NAME", 'И.И. Иванов')
+AS = os.getenv("AS", 'в лице директора Иванова Ивана Ивановича, действующего ')
+AS = AS + ' ' if AS else ''
+BASED_ON = os.getenv("BASED_ON", "Устава")
+OUR_REQUIZITS = os.getenv("OUR_REQUIZITS", "").replace("\\n", "\n")
 
 
+#------------------------------------------------
 
 def generate_docx_act(customer, work_list, contract_number, doc_date, act_date,  total_cost):
     doc = Document()
@@ -50,10 +63,11 @@ def generate_docx_act(customer, work_list, contract_number, doc_date, act_date, 
     # Main text
     p = doc.add_paragraph()
     p.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
+
     p.add_run(
         f"1. {customer[1]}, в лице {customer[9]} {customer[2]}, действующего на основании {customer[3]}, именуемое в дальнейшем ЗАКАЗЧИК, "
-        f"с одной стороны, и индивидуальный предприниматель Панченко Константин Александрович, действующий в качестве индивидуального "
-        f"предпринимателя на основании регистрационного свидетельства 0157617, выданного МГИК «04» декабря 2008г., именуемый в дальнейшем "
+        f"с одной стороны, и {USER_COMPANY}, {AS}"
+        f"на основании {BASED_ON}, именуемый в дальнейшем "
         f"ИСПОЛНИТЕЛЬ, с другой стороны, составили настоящий Акт о том, что выполненные Исполнителем работы:"
     ).font.size = Pt(11)
     p.paragraph_format.space_before = Pt(0)
@@ -130,17 +144,13 @@ def generate_docx_act(customer, work_list, contract_number, doc_date, act_date, 
     p_ispolnitel = row_cells[0].paragraphs[0]
 
     # Создаем жирный Run для "ИП Панченко К.А."
-    run_ispolnitel_bold = p_ispolnitel.add_run('ИП Панченко К.А.\n')
+    run_ispolnitel_bold = p_ispolnitel.add_run(f'{USER_COMPANY_SHORT}\n')
     run_ispolnitel_bold.font.size = Pt(9)
     run_ispolnitel_bold.bold = True
 
     # Добавляем остальной текст (обычным шрифтом)
     run_ispolnitel = p_ispolnitel.add_run(
-        '220007 г.Минск, ул.Жуковского 9/2-6\n'
-        'IBAN: BY47MTBK30130001093300064929\n'
-        'ЗАО «МТБанк», BIC MTBKBY22,\n'
-        'г.Минск, ул.Толстого, 10\n'
-        'УНП 191085820'
+        f"{OUR_REQUIZITS}"
     )
     run_ispolnitel.font.size = Pt(9)
 
@@ -174,7 +184,7 @@ def generate_docx_act(customer, work_list, contract_number, doc_date, act_date, 
     table.columns[1].width = Pt(450)  # Example width for the second column
 
     cell1 = table.cell(0, 0)
-    cell1.text = 'Исполнитель_________(К.А. Панченко)'
+    cell1.text = f'Исполнитель_________({USER_NAME})'
     cell1.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
     cell1.paragraphs[0].runs[0].font.size = Pt(9)
 
@@ -255,9 +265,9 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     p = doc.add_paragraph()
     p.alignment = WD_PARAGRAPH_ALIGNMENT.JUSTIFY
     p.add_run(
-        f"{customer[1]}, в лице {customer[9]} {customer[2]}, действующего на основании {customer[3]}, именуемое в дальнейшем ЗАКАЗЧИК, "
-        f"с одной стороны, и индивидуальный предприниматель Панченко Константин Александрович, действующий в качестве индивидуального "
-        f"предпринимателя на основании регистрационного свидетельства 0157617, выданного МГИК «04» декабря 2008г., именуемый в дальнейшем "
+         f"1. {customer[1]}, в лице {customer[9]} {customer[2]}, действующего на основании {customer[3]}, именуемое в дальнейшем ЗАКАЗЧИК, "
+        f"с одной стороны, и {USER_COMPANY}, {AS}"
+        f"на основании {BASED_ON}, именуемый в дальнейшем "
         f"ИСПОЛНИТЕЛЬ, с другой стороны, заключили настоящий договор о нижеследующем:"
     ).font.size = Pt(10)
     p.paragraph_format.space_before = Pt(0)
@@ -363,17 +373,14 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     p_ispolnitel = row_cells[0].paragraphs[0]
 
     # Создаем жирный Run для "ИП Панченко К.А."
-    run_ispolnitel_bold = p_ispolnitel.add_run('ИП Панченко К.А.\n')
+    run_ispolnitel_bold = p_ispolnitel.add_run(f'{USER_COMPANY_SHORT}\n')
     run_ispolnitel_bold.font.size = Pt(9)
     run_ispolnitel_bold.bold = True
 
     # Добавляем остальной текст (обычным шрифтом)
+
     run_ispolnitel = p_ispolnitel.add_run(
-        '220007 г.Минск, ул.Жуковского 9/2-6\n'
-        'IBAN: BY47MTBK30130001093300064929\n'
-        'ЗАО «МТБанк», BIC MTBKBY22,\n'
-        'г.Минск, ул.Толстого, 10\n'
-        'УНП 191085820'
+        f"{OUR_REQUIZITS}"
     )
     run_ispolnitel.font.size = Pt(9)
 
@@ -408,7 +415,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     table.columns[1].width = Pt(450)  # Example width for the second column
 
     cell1 = table.cell(0, 0)
-    cell1.text = 'Исполнитель_________(К.А. Панченко)'
+    cell1.text = f'Исполнитель_________({USER_NAME})'
     cell1.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
     cell1.paragraphs[0].runs[0].font.size = Pt(9)
 
@@ -494,7 +501,7 @@ def generate_docx(customer, work_list, payment_term, completion, contract_number
     table.autofit = True
 
     cell1 = table.cell(0, 0)
-    cell1.text = 'Исполнитель_________(К.А. Панченко)'
+    cell1.text = f'Исполнитель_________({USER_NAME})'
     cell1.paragraphs[0].paragraph_format.alignment = WD_PARAGRAPH_ALIGNMENT.LEFT
     cell1.paragraphs[0].runs[0].font.size = Pt(9)
 

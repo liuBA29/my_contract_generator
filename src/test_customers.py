@@ -1,4 +1,4 @@
-# src/test_customers.py
+# src/gui.py
 from src.create_db import main as create_db_main
 import tkinter as tk
 from tkinter import ttk
@@ -13,6 +13,12 @@ from src.database import (fetch_all_customers, fetch_customer_data, fetch_comple
                           fetch_all_payment_terms, fetch_payment_terms_by_id)
 from src.document_generator import generate_docx, generate_docx_act
 import add_customer_gui
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
+
+
 
 # --- Глобальные данные ---
 customers = fetch_all_customers()
@@ -71,8 +77,13 @@ def open_customer_selector():
         index = listbox.curselection()[0]
         selected = listbox.get(index)
         customer_id = selected.split(" - ")[0]
+        customer_name = selected.split(" - ")[1]
+
         entry_customer_id.delete(0, tk.END)
         entry_customer_id.insert(0, customer_id)
+
+
+        label_selected_customer.config(text=f"Вы выбрали: {customer_name}",  fg="green")
 
         selector.destroy()
 
@@ -261,9 +272,6 @@ def add_work():
 
 
 
-
-
-
 def refresh_gui():
     refresh_customers()
 
@@ -276,6 +284,10 @@ tk.Label(root, text="Выберите клиента:").grid(row=0, column=0, st
 btn_select_customer = tk.Button(root, text="Выбрать клиента", command=open_customer_selector)
 btn_select_customer.grid(row=0, column=1, sticky="w", padx=10, pady=5)
 
+label_selected_customer = tk.Label(root, text="Клиент не выбран", fg="gray")
+label_selected_customer.grid(row=1, column=1, columnspan=2, sticky="w", padx=10)
+
+
 # Кнопка для добавления клиента
 add_customer_button = tk.Button(root, text="Добавить клиента", command=add_customer)
 add_customer_button.grid(row=0, column=2, padx=10, pady=5)
@@ -287,10 +299,10 @@ refresh_button = tk.Button(root, text=f"{recycle_icon}", font=("Arial", 24),
                            activebackground="#b2ebf2", borderwidth=0, command=refresh_gui)
 refresh_button.grid(row=1, column=2, padx=10, pady=5)
 
-# Поле для ввода ID клиента
-tk.Label(root, text="ID клиента:").grid(row=1, column=0, sticky="w", padx=10, pady=5)
+# # Поле для ввода ID клиента
+# tk.Label(root, text="ID клиента:").grid(row=1, column=0, sticky="w", padx=10, pady=5)
 entry_customer_id = tk.Entry(root, width=15)
-entry_customer_id.grid(row=1, column=1, sticky="w", padx=10, pady=5)
+
 
 #===================================================
 
