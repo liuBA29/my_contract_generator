@@ -11,11 +11,22 @@ __pycache__/
 .idea/
 *.sublime-workspace
 *.sublime-project
+*test.py
+test*.py
+test.py
+test2.py
+test_3.py
+test_customers.py
+check1.py
+
 
 # Виртуальная среда
 venv/
 env/
 *.env
+.env
+.venv
+.venv/
 
 # Логи
 *.log

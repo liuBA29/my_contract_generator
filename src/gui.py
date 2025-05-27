@@ -1,4 +1,30 @@
 # src/gui.py
+
+"""
+gui.py
+Part of the contract_generator demo project
+
+Copyright (c) 2025 Liubov Kovaleva (@liuBA29)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
+PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
+FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+"""
+
+
+
 from src.create_db import main as create_db_main
 import tkinter as tk
 from tkinter import ttk
@@ -24,8 +50,6 @@ load_dotenv()
 customers = fetch_all_customers()
 
 
-
-
 def refresh_customers():
     global customers
     customers = fetch_all_customers()
@@ -45,11 +69,18 @@ def open_customer_selector():
     entry_search = tk.Entry(selector, textvariable=search_var)
     entry_search.pack(padx=10, pady=5, fill="x")
 
-    listbox = tk.Listbox(selector, height=15)
-    listbox.pack(padx=10, pady=5, fill="both", expand=True)
+    # listbox = tk.Listbox(selector, height=15)
+    # listbox.pack(padx=10, pady=5, fill="both", expand=True)
 
-    scrollbar = tk.Scrollbar(listbox, command=listbox.yview)
+    frame_listbox = tk.Frame(selector)
+    frame_listbox.pack(padx=10, pady=5, fill="both", expand=True)
+
+    listbox = tk.Listbox(frame_listbox, height=15)
+    listbox.pack(side="left", fill="both", expand=True)
+
+    scrollbar = tk.Scrollbar(frame_listbox, command=listbox.yview)
     scrollbar.pack(side="right", fill="y")
+
     listbox.config(yscrollcommand=scrollbar.set)
 
     def fill_listbox(filtered=None):
@@ -83,7 +114,7 @@ def open_customer_selector():
         entry_customer_id.insert(0, customer_id)
 
 
-        label_selected_customer.config(text=f"Вы выбрали: {customer_name}",  fg="green")
+        label_selected_customer.config(text=f"Вы выбрали: {customer_name}")
 
         selector.destroy()
 
@@ -276,101 +307,166 @@ def refresh_gui():
     refresh_customers()
 
 # --- Создание главного окна ---
+import tkinter as tk
+from tkinter import ttk
+from tkinter import messagebox
+
+# Стиль для всего окна
 root = tk.Tk()
-root.title("Генератор договоров")
+root.title("Генератор договоров и актов")
+root.geometry("600x600")
+root.configure(bg="#f9f9f9")  # светлый фон
 
-# Кнопка для открытия окна выбора клиента
-tk.Label(root, text="Выберите клиента:").grid(row=0, column=0, sticky="w", padx=10, pady=5)
-btn_select_customer = tk.Button(root, text="Выбрать клиента", command=open_customer_selector)
-btn_select_customer.grid(row=0, column=1, sticky="w", padx=10, pady=5)
+DEFAULT_FONT = ("Segoe UI", 10)
+LABEL_FONT = ("Segoe UI", 10, "bold")
+BUTTON_FONT = ("Segoe UI", 10, "bold")
 
-label_selected_customer = tk.Label(root, text="Клиент не выбран", fg="gray")
-label_selected_customer.grid(row=1, column=1, columnspan=2, sticky="w", padx=10)
-
-
-# Кнопка для добавления клиента
-add_customer_button = tk.Button(root, text="Добавить клиента", command=add_customer)
-add_customer_button.grid(row=0, column=2, padx=10, pady=5)
-
-# Кнопка обновления клиентов
-recycle_icon = "🔄"
-refresh_button = tk.Button(root, text=f"{recycle_icon}", font=("Arial", 24),
-                           width=3, height=1, relief="flat",
-                           activebackground="#b2ebf2", borderwidth=0, command=refresh_gui)
-refresh_button.grid(row=1, column=2, padx=10, pady=5)
-
-# # Поле для ввода ID клиента
-# tk.Label(root, text="ID клиента:").grid(row=1, column=0, sticky="w", padx=10, pady=5)
-entry_customer_id = tk.Entry(root, width=15)
+# Общий стиль для Label, Entry, Button
+style = ttk.Style()
+style.theme_use('clam')
+style.configure("TLabel", background="#f9f9f9", font=LABEL_FONT)
+style.configure("TEntry", font=DEFAULT_FONT)
+style.configure("TButton",
+                font=BUTTON_FONT,
+                foreground="#ffffff",
+                background="#007acc",
+                borderwidth=0,
+                padding=6)
+style.map("TButton",
+          foreground=[('active', '#ffffff')],
+          background=[('active', '#005f99')])
 
 
-#===================================================
 
 
-# Поле для ввода номера договора
-tk.Label(root, text="Введите номер договора:").grid(row=2, column=0, sticky="w", padx=10, pady=5)
-entry_contract_number = tk.Entry(root, width=50)
-entry_contract_number.grid(row=2, column=1, padx=10, pady=5)
+payment_condition_var = tk.StringVar()
+payment_term_var = tk.StringVar()
 
+
+# Сетка с отступами
+def grid_widget(widget, row, col, **kwargs):
+    widget.grid(row=row, column=col, sticky="w", padx=12, pady=8, **kwargs)
+
+# Кнопка выбора клиента
+lbl_choose_customer = ttk.Label(root, text="Выберите клиента:")
+grid_widget(lbl_choose_customer, 0, 0)
+
+btn_select_customer = ttk.Button(root, text="Выбрать клиента", command=open_customer_selector)
+grid_widget(btn_select_customer, 0, 1)
+
+label_selected_customer = ttk.Label(root, text="Клиент не выбран", foreground="gray")
+label_selected_customer.grid(row=1, column=1, sticky="w", padx=12)
+
+btn_add_customer = ttk.Button(root, text="Добавить клиента", command=add_customer)
+btn_add_customer.grid(row=0, column=2, padx=12, pady=8)
+
+btn_refresh = ttk.Button(root, text="⟳", width=3, command=refresh_gui)
+# btn_refresh.grid(row=1, column=2, padx=12, pady=8, sticky="w")
+
+# ID клиента (если надо, активируй)
+entry_customer_id = ttk.Entry(root, width=15)
+# grid_widget(entry_customer_id, 1, 0)
+
+# Номер договора
+lbl_contract_number = ttk.Label(root, text="Введите номер договора:")
+grid_widget(lbl_contract_number, 2, 0)
+
+entry_contract_number = ttk.Entry(root, width=30)
+grid_widget(entry_contract_number, 2, 1)
 
 # Дата договора
-tk.Label(root, text="Дата договора (дд.мм.гггг):").grid(row=3, column=0, sticky="w", padx=10, pady=5)
-entry_doc_date = tk.Entry(root, width=30)
-entry_doc_date.grid(row=3, column=1, sticky="w", padx=10, pady=5)
+lbl_doc_date = ttk.Label(root, text="Дата договора (дд.мм.гггг):")
+grid_widget(lbl_doc_date, 3, 0)
 
+entry_doc_date = ttk.Entry(root, width=30)
+grid_widget(entry_doc_date, 3, 1)
 
-# Поле для выбора типа оплаты
-tk.Label(root, text="Выберите тип оплаты:").grid(row=4, column=0, sticky="w", padx=10, pady=5)
-payment_condition_var = tk.StringVar()
-payment_condition_combobox = ttk.Combobox(root, textvariable=payment_condition_var, values=["предоплата", "постоплата"],
-                                          state="readonly")
-payment_condition_combobox.grid(row=4, column=1, padx=10, pady=5)
+# Тип оплаты
+lbl_payment_condition = ttk.Label(root, text="Выберите тип оплаты:")
+grid_widget(lbl_payment_condition, 4, 0)
+
+payment_condition_combobox = ttk.Combobox(root, textvariable=payment_condition_var,
+                                         values=["предоплата", "постоплата"],
+                                         state="readonly", width=28)
+grid_widget(payment_condition_combobox, 4, 1)
 payment_condition_combobox.bind("<<ComboboxSelected>>", update_payment_terms)
 
+# Процент предоплаты
+lbl_payment_term = ttk.Label(root, text="Выберите процент предоплаты:")
+grid_widget(lbl_payment_term, 5, 0)
 
-# Поле для выбора процента предоплаты
-tk.Label(root, text="Выберите процент предоплаты:").grid(row=5, column=0, sticky="w", padx=10, pady=5)
-payment_term_var = tk.StringVar()
-payment_term_combobox = ttk.Combobox(root, textvariable=payment_term_var, state="disabled")
-payment_term_combobox.grid(row=5, column=1, padx=10, pady=5)
-
-
-
-# Поле для ввода места проведения работ
-tk.Label(root, text="Введите место проведения работ:").grid(row=6, column=0, sticky="w", padx=10, pady=5)
-entry_location = tk.Entry(root, width=50)
-entry_location.grid(row=6, column=1, padx=10, pady=5)
+payment_term_combobox = ttk.Combobox(root, textvariable=payment_term_var, state="disabled", width=28)
+grid_widget(payment_term_combobox, 5, 1)
 
 
 
 
+# Поле ввода работ
+lbl_work = ttk.Label(root, text="Введите работу:")
+grid_widget(lbl_work, 6, 0)
+
+entry_work = ttk.Entry(root, width=30)
+grid_widget(entry_work, 6, 1)
+
+btn_add_work = ttk.Button(root, text="Добавить работу", command=add_work)
+grid_widget(btn_add_work, 6, 2)
+
+# Фрейм для списка работ с прокруткой
+# Фрейм для списка работ с прокруткой (уменьшен в 3 раза)
+# Фрейм для списка работ с прокруткой (в 3 раза меньше)
+work_frame = tk.Frame(root, bg="#ffffff", relief="sunken", borderwidth=1, height=100)
+work_frame.grid(row=7, column=0, columnspan=3, padx=12, pady=8, sticky="ew")
+work_frame.grid_propagate(False)  # Отключаем авторастяжение по содержимому
+
+canvas = tk.Canvas(work_frame, bg="#ffffff", highlightthickness=0, height=100)
+canvas.pack(side="left", fill="both", expand=True)
+
+scrollbar = ttk.Scrollbar(work_frame, orient="vertical", command=canvas.yview)
+scrollbar.pack(side="right", fill="y")
+
+canvas.configure(yscrollcommand=scrollbar.set)
+
+work_list_frame = tk.Frame(canvas, bg="#ffffff")
+canvas.create_window((0, 0), window=work_list_frame, anchor='nw')
+
+def on_frame_configure(event):
+    canvas.configure(scrollregion=canvas.bbox("all"))
+
+work_list_frame.bind("<Configure>", on_frame_configure)
 
 
-tk.Label(root, text="Работы:").grid(row=7, column=0, sticky="nw", padx=10, pady=5)
-work_frame = tk.Frame(root)
-work_frame.grid(row=7, column=1, columnspan=2, sticky="we", padx=10, pady=5)
-
-# Список для хранения виджетов работ
 work_entries = []
 
-# Добавление работы
-entry_work = tk.Entry(root, width=30)
-entry_work.grid(row=8, column=1, sticky="w", padx=10, pady=5)
-btn_add_work = tk.Button(root, text="Добавить работу", command=add_work)
-btn_add_work.grid(row=8, column=2, padx=10, pady=5)
+# Стоимость работ
+lbl_total_cost = ttk.Label(root, text="Общая стоимость работ:")
+grid_widget(lbl_total_cost, 8, 0)
+
+entry_total_cost = ttk.Entry(root, width=30)
+grid_widget(entry_total_cost, 8, 1)
 
 
-# Общая стоимость
-tk.Label(root, text="Общая стоимость:").grid(row=9, column=0, sticky="w", padx=10, pady=5)
-entry_total_cost = tk.Entry(root, width=30)
-entry_total_cost.grid(row=9, column=1, sticky="w", padx=10, pady=5)
+####=====
+# Место проведения работ
+lbl_location = ttk.Label(root, text="Место проведения работ:")
+grid_widget(lbl_location, 9, 0)
 
-# Кнопки генерации
-btn_generate_contract = tk.Button(root, text="Генерировать договор", command=generate_contract)
-btn_generate_contract.grid(row=10, column=1, sticky="w", padx=10, pady=10)
+entry_location = ttk.Entry(root, width=30)
+grid_widget(entry_location, 9, 1)
+####====
 
-btn_generate_act = tk.Button(root, text="Генерировать акт", command=generate_act)
-btn_generate_act.grid(row=10, column=2, sticky="w", padx=10, pady=10)
+
+# Кнопки генерации документов
+btn_generate_contract = ttk.Button(root, text="Сгенерировать договор", command=generate_contract)
+btn_generate_contract.grid(row=10, column=0, columnspan=2, pady=15, padx=12, sticky="ew")
+
+btn_generate_act = ttk.Button(root, text="Сгенерировать акт", command=generate_act)
+btn_generate_act.grid(row=10, column=2, pady=15, padx=12, sticky="ew")
+
+
+
+root.grid_columnconfigure(1, weight=1)
+root.grid_rowconfigure(7, weight=1)
 
 root.mainloop()
+
 

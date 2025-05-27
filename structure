@@ -11,7 +11,7 @@ my_contract_generator/
 │   ├── user_input.py         # Функции для ввода данных от пользователя
 │   |── main.py               #
 │   |── gui.py                # Основной скрипт для запуска gui
-|   |── add_customer_gui.py   #
-│   └── edit_customer.py      #
+|   |── add_customer_gui.py   # файл для добавления, редактирования и удаления клиентов
+│   └── edit_customer.py      # нет этого файла
 │
 └── README.md                 # Документация по проекту

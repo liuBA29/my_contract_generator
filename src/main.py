@@ -1,5 +1,8 @@
 # src/main.py
 
+# Copyright (c) 2025 Liubov Kovaleva (@liuBA29)
+# Licensed under the MIT License.
+
 
 import os
 import sqlite3

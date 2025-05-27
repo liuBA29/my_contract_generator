@@ -1,4 +1,10 @@
 # src/act_generator.py
+# Copyright (c) 2025 Liubov Kovaleva (@liuBA29)
+# Licensed under the MIT License.
+
+
+
+
 from src.document_generator import generate_docx
 
 def generate_completion_act(customer, contract_number, location, doc_date, work_list, total_cost):

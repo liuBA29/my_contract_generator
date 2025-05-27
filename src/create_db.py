@@ -1,4 +1,10 @@
 #src/create_db.py
+
+# Copyright (c) 2025 Liubov Kovaleva (@liuBA29)
+# Licensed under the MIT License.
+
+
+
 from config import *
 import os, sys
 import sqlite3

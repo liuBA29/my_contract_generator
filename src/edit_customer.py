@@ -1,5 +1,10 @@
 # crc/edit_customer.py
 
+# Copyright (c) 2025 Liubov Kovaleva (@liuBA29)
+# Licensed under the MIT License.
+
+
+
 import tkinter as tk
 from tkinter import messagebox
 import sqlite3

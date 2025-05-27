@@ -1,6 +1,11 @@
 # src/database.py
 
 import os, sys
+# Copyright (c) 2025 Liubov Kovaleva (@liuBA29)
+# Licensed under the MIT License.
+
+
+
 import sqlite3
 import create_db
 from config import *

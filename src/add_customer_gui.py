@@ -1,3 +1,8 @@
+
+# Copyright (c) 2025 Liubov Kovaleva (@liuBA29)
+# Licensed under the MIT License.
+
+
 import tkinter as tk
 from tkinter import messagebox
 import sqlite3
@@ -167,7 +172,7 @@ def main():
 
     root = tk.Tk()
     root.title("Управление клиентами")
-    root.geometry('900x450')
+    root.geometry('900x250')
 
     tk.Label(root, text="Название организации").grid(row=0, column=0)
     entry_organization_name = tk.Entry(root, width=70)
