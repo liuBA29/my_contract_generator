@@ -5,8 +5,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="824d2b25-ff24-4f66-a891-88d960aef178" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dist/gui.exe" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/Analysis-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/EXE-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/PKG-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/PYZ-00.pyz" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/PYZ-00.pyz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/PYZ-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/PYZ-00.toc" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/base_library.zip" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/base_library.zip" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/gui.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/gui.pkg" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/warn-gui.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/warn-gui.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/build/gui/xref-gui.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/xref-gui.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/pyinstaller_text.docx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pyinstaller_text.docx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -35,33 +44,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.act_genetaror.executor&quot;: &quot;Run&quot;,
-    &quot;Python.add_customer_gui.executor&quot;: &quot;Run&quot;,
-    &quot;Python.check1.executor&quot;: &quot;Run&quot;,
-    &quot;Python.create_db.executor&quot;: &quot;Run&quot;,
-    &quot;Python.create_db2.executor&quot;: &quot;Run&quot;,
-    &quot;Python.database.executor&quot;: &quot;Run&quot;,
-    &quot;Python.document_generator.executor&quot;: &quot;Run&quot;,
-    &quot;Python.edit_customer.executor&quot;: &quot;Run&quot;,
-    &quot;Python.gui.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.python src/main.py.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test2.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_customers.executor&quot;: &quot;Run&quot;,
-    &quot;Python.test_gui.executor&quot;: &quot;Run&quot;,
-    &quot;Python.user_input.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/admindell/PycharmProjects/toico&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.act_genetaror.executor": "Run",
+    "Python.add_customer_gui.executor": "Run",
+    "Python.check1.executor": "Run",
+    "Python.create_db.executor": "Run",
+    "Python.create_db2.executor": "Run",
+    "Python.database.executor": "Run",
+    "Python.document_generator.executor": "Run",
+    "Python.edit_customer.executor": "Run",
+    "Python.gui.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.python src/main.py.executor": "Run",
+    "Python.test.executor": "Run",
+    "Python.test2.executor": "Run",
+    "Python.test_customers.executor": "Run",
+    "Python.test_gui.executor": "Run",
+    "Python.user_input.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "C:/Users/admindell/PycharmProjects/my_site",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\lu-\PycharmProjects\my_contract_generator\src" />
