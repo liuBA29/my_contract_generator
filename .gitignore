@@ -35,6 +35,8 @@ env/
 docs_out/
 *.docx
 *.doc
+*.iss
+*.zip
 
 # Конфиденциальные файлы
 *.secret

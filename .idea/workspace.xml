@@ -5,17 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="824d2b25-ff24-4f66-a891-88d960aef178" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/build/gui/Analysis-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/Analysis-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/build/gui/EXE-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/EXE-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/build/gui/PKG-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/PKG-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/build/gui/PYZ-00.pyz" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/PYZ-00.pyz" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/build/gui/PYZ-00.toc" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/PYZ-00.toc" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/build/gui/base_library.zip" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/base_library.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/build/gui/gui.pkg" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/gui.pkg" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/build/gui/warn-gui.txt" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/warn-gui.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/build/gui/xref-gui.html" beforeDir="false" afterPath="$PROJECT_DIR$/src/build/gui/xref-gui.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/pyinstaller_text.docx" beforeDir="false" afterPath="$PROJECT_DIR$/src/pyinstaller_text.docx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
