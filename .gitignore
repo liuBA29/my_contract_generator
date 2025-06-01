@@ -37,6 +37,8 @@ docs_out/
 *.doc
 *.iss
 *.zip
+ContractGeneratorSetup.zip
+installer-script.iss
 
 # Конфиденциальные файлы
 *.secret
